@@ -1,4 +1,4 @@
-import AppKit
+import CoreGraphics
 import KropicCore
 import Observation
 
@@ -18,21 +18,29 @@ final class ResultViewModel {
     let image: CGImage?
     let scale: CGFloat
     private(set) var state: State
-    var text = ""
-    private(set) var didCopy = false
+    var text = "" {
+        didSet {
+            if text != oldValue, state == .recognized {
+                translation.textChanged(text, debounce: true)
+            }
+        }
+    }
 
-    @ObservationIgnored private var copyResetTask: Task<Void, Never>?
+    let translationProvider = AppleTranslationProvider()
+    let translation: TranslationViewModel
 
     init(image: CGImage, scale: CGFloat) {
         self.image = image
         self.scale = scale
         state = .recognizing
+        translation = TranslationViewModel(translator: translationProvider)
     }
 
     init(captureFailure message: String) {
         image = nil
         scale = 1
         state = .failed(message)
+        translation = TranslationViewModel(translator: translationProvider)
     }
 
     /// The image's size in points, scaled down to fit the panel.
@@ -48,6 +56,7 @@ final class ResultViewModel {
         } else {
             text = result.text
             state = .recognized
+            translation.textChanged(result.text, debounce: false)
         }
     }
 
@@ -55,15 +64,4 @@ final class ResultViewModel {
         state = .failed(message)
     }
 
-    func copyText() {
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(text, forType: .string)
-        didCopy = true
-        copyResetTask?.cancel()
-        copyResetTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(1.5))
-            guard !Task.isCancelled else { return }
-            self?.didCopy = false
-        }
-    }
 }

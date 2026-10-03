@@ -111,3 +111,23 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** `TextLayout` in KropicCore rebuilds rows and paragraphs from line positions
 - **Why** Vision's paragraph information (`shouldWrapToNextLine`, `transcript`, `RecognizeDocumentsRequest`) needs macOS 26 and the target is macOS 15
 - **Alternatives** Using the macOS 26 APIs behind `if #available`, which could also fix multi-column text. A candidate for later
+
+### D-023 One translation path through .translationTask
+- **Decision** All translation goes through the SwiftUI `.translationTask` modifier, also on macOS 26
+- **Why** `TranslationSession(installedSource:target:)` needs macOS 26 and only works for installed language packs, so it cannot trigger the download prompt. `.translationTask` works on macOS 15 and shows the prompt itself. One path is simpler to test
+- **Alternatives** Direct sessions on macOS 26 for installed pairs, with `.translationTask` as a fallback
+
+### D-024 Translating protocol is @MainActor
+- **Decision** `Translating` in KropicCore is a `@MainActor` protocol
+- **Why** Apple's provider has to be a main-actor object because its session lives in a view. In Swift 6 a main-actor class cannot satisfy nonisolated protocol requirements. A cloud provider can still do its network work off the main actor inside `translate`
+- **Alternatives** A nonisolated `Sendable` protocol with an actor-based bridge, which adds complexity for no gain today
+
+### D-025 Session work stays off the main actor
+- **Decision** `TranslationHost` passes a `@Sendable` closure to `.translationTask` and calls a `nonisolated` helper that uses the session, hopping to the main actor only to take the queued request and deliver the outcome. `LanguageAvailability` is used in `nonisolated` static helpers
+- **Why** Both types are not `Sendable`; using them from the main actor fails strict concurrency checking ("sending 'session' risks causing data races")
+- **Alternatives** `@preconcurrency import Translation`, which only turns the errors into warnings and hides a real risk
+
+### D-026 Last target language in UserDefaults
+- **Decision** The last chosen target language is stored in `UserDefaults` as a language identifier
+- **Why** It is a preference, not captured content, so it does not conflict with D-005. Phase 5 settings can build on the same key
+- **Alternatives** Not remembering it, which PRODUCT.md rules out

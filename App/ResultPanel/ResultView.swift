@@ -5,7 +5,7 @@ struct ResultView: View {
     let onRetry: () -> Void
 
     private static let textColumnWidth: CGFloat = 320
-    private static let minimumHeight: CGFloat = 200
+    private static let minimumHeight: CGFloat = 380
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
@@ -23,6 +23,10 @@ struct ResultView: View {
                 .frame(width: Self.textColumnWidth, height: max(model.imageDisplaySize.height, Self.minimumHeight))
         }
         .padding(16)
+        .modifier(TranslationHost(provider: model.translationProvider))
+        .task {
+            await model.translation.loadLanguages()
+        }
     }
 
     @ViewBuilder
@@ -46,9 +50,9 @@ struct ResultView: View {
                     .background(RoundedRectangle(cornerRadius: 6).fill(Color(nsColor: .textBackgroundColor)))
                     .overlay(RoundedRectangle(cornerRadius: 6).stroke(.separator))
 
-                Button(model.didCopy ? "Copied" : "Copy", systemImage: model.didCopy ? "checkmark" : "doc.on.doc") {
-                    model.copyText()
-                }
+                CopyButton(text: model.text)
+
+                TranslationView(model: model.translation)
             }
 
         case .noText:

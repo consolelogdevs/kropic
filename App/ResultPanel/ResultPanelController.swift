@@ -6,12 +6,16 @@ import SwiftUI
 final class ResultPanelController {
     private static let gap: CGFloat = 12
     private var panel: ResultPanel?
+    private var model: ResultViewModel?
 
     func show(_ model: ResultViewModel, near selection: SelectionResult, onRetry: @escaping () -> Void, onClose: @escaping () -> Void) {
         close()
 
         let panel = ResultPanel()
-        panel.onClose = onClose
+        panel.onClose = { [weak model] in
+            model?.translation.cancel()
+            onClose()
+        }
         let hostingController = NSHostingController(rootView: ResultView(model: model, onRetry: onRetry))
         panel.contentViewController = hostingController
 
@@ -24,10 +28,13 @@ final class ResultPanelController {
 
         panel.makeKeyAndOrderFront(nil)
         self.panel = panel
+        self.model = model
     }
 
     /// Closes the panel without running its close callback, for when a new capture replaces it.
     func close() {
+        model?.translation.cancel()
+        model = nil
         panel?.onClose = nil
         panel?.close()
         panel = nil

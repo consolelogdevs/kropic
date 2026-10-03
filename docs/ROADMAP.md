@@ -32,11 +32,11 @@ Done when captures are pixel-accurate on a Retina display and on an external dis
 - [x] Loading state and "No text found" state
 
 ## Phase 4 — Language detection and translation
-- [ ] LanguageDetector in KropicCore with tests
-- [ ] Source and target pickers, last target remembered
-- [ ] AppleTranslationProvider behind the `Translating` protocol
-- [ ] Auto-translate when languages differ, debounced re-translate on edit
-- [ ] Language pack download prompt and unsupported pair message
+- [x] LanguageDetector in KropicCore with tests
+- [x] Source and target pickers, last target remembered
+- [x] AppleTranslationProvider behind the `Translating` protocol
+- [x] Auto-translate when languages differ, debounced re-translate on edit
+- [x] Language pack download prompt and unsupported pair message
 
 ## Phase 5 — Polish
 - [ ] Settings window (see PRODUCT.md)

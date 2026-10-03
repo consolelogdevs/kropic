@@ -59,12 +59,14 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 - Known limitation: side-by-side columns are interleaved row by row
 - Returns `RecognizedText`: the rebuilt text plus each line with its confidence and normalized position
 
-**LanguageDetector** (KropicCore) uses `NLLanguageRecognizer` and returns the dominant language. Short or mixed text can be detected wrongly, so the UI always allows an override.
+**LanguageDetector** (KropicCore) uses `NLLanguageRecognizer` and returns the dominant language, or `nil` for text with fewer than 3 letters or confidence below 0.5. Short or mixed text can be detected wrongly, so the UI always allows an override. When our detection gives `nil`, the source is left empty and Apple's framework identifies the language itself.
 
 **Translation**
-- KropicCore defines a `Translating` protocol and the shared types (language, request, result). Cloud providers can implement it later
-- `AppleTranslationProvider` lives in the app target. On macOS 15 a `TranslationSession` is only obtained through the SwiftUI `.translationTask` modifier, so the provider is driven by a view in the result panel. If the SDK on this machine allows creating a session directly, use that behind the same protocol and record it in DECISIONS.md
-- Check `LanguageAvailability` before translating to tell apart installed, downloadable and unsupported pairs
+- KropicCore defines a `@MainActor` `Translating` protocol and the shared types (request, result, availability, `TranslationFailure`). Cloud providers can implement it later
+- `AppleTranslationProvider` lives in the app target. On macOS 15 a `TranslationSession` is only obtained through the SwiftUI `.translationTask` modifier. `translate()` queues the request and changes the session configuration (or calls `invalidate()` for the same pair); `TranslationHost`, attached to the result view, runs the task, translates and hands the outcome back, which resumes the caller. `TranslationSession(installedSource:target:)` exists but needs macOS 26 and installed packs, so it is not used (D-023)
+- `TranslationSession` and `LanguageAvailability` are not `Sendable`. They are only used inside `nonisolated` code and never cross to the main actor
+- Check `LanguageAvailability` before translating to tell apart installed, downloadable and unsupported pairs. Translating a downloadable pair makes the system show its download prompt on the result panel. Declining it has no dedicated error, so a failure on a still-downloadable pair is reported as a missing language pack
+- `TranslationViewModel` owns the pickers and states. Edits re-translate after a 0.6 s debounce; picker changes translate immediately. `LanguageCatalog` maps detected or system languages to Apple's list (e.g. `en-TR` → `en`) and remembers the last target in `UserDefaults`
 
 **ResultPanel** is a floating `NSPanel` positioned next to the selection (right, left, below, above) and clamped to the visible frame of that display (`Placement.panelFrame`). Content is SwiftUI. The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
 
