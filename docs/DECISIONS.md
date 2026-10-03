@@ -1,0 +1,53 @@
+# Decisions
+
+Newest at the bottom. Format for each entry is the title line followed by Decision, Why and Alternatives.
+
+### D-001 Native Swift instead of Electron or Tauri
+- **Decision** Swift with SwiftUI and AppKit
+- **Why** Screen capture, OCR and translation are all native Apple frameworks. A native app stays small and fast and keeps an iOS version possible
+- **Alternatives** Electron or Tauri would reuse web skills but need native bridges for every core feature
+
+### D-002 Apple frameworks for OCR and translation
+- **Decision** Vision for OCR, Translation framework for translation
+- **Why** Free, on-device, private, works offline
+- **Alternatives** Google, DeepL or Claude APIs. Possibly added later behind the `Translating` protocol
+
+### D-003 macOS 15 minimum
+- **Decision** Deployment target macOS 15
+- **Why** The Translation framework and the newer Swift Vision API need it
+- **Alternatives** macOS 14 would mean dropping on-device translation
+
+### D-004 XcodeGen
+- **Decision** Generate the Xcode project from `project.yml`
+- **Why** Readable diffs and no hand-edited project files, which matters when an AI agent edits the project
+- **Alternatives** Plain Xcode project or Tuist
+
+### D-005 Images stay in memory
+- **Decision** Captured images are never written to disk. History keeps text only
+- **Why** Privacy. Screenshots often contain sensitive content
+- **Alternatives** Saving images for history
+
+### D-006 App Sandbox on from the start
+- **Decision** Enable App Sandbox in Phase 0
+- **Why** Keeps the Mac App Store option open. Turning it on late usually breaks things
+- **Alternatives** No sandbox with direct distribution only
+
+### D-007 Swift Testing instead of XCTest
+- **Decision** KropicCore tests use Swift Testing (`import Testing`, `@Test`, `#expect`)
+- **Why** Modern Apple test framework, less boilerplate, parameterized tests are handy for OCR fixtures
+- **Alternatives** XCTest, which still works but is the older API
+
+### D-008 Bundle ID prefix comes from Local.xcconfig
+- **Decision** `PRODUCT_BUNDLE_IDENTIFIER = $(BUNDLE_ID_PREFIX).kropic`. Base.xcconfig sets a neutral default `app.kropic`, `Local.xcconfig` may override it
+- **Why** Keeps anything personal out of committed files while letting each developer sign with their own ID
+- **Alternatives** Hardcoding a reverse-DNS ID in `project.yml`
+
+### D-009 Explicit @MainActor, no default actor isolation
+- **Decision** The app target keeps Swift's default `nonisolated` isolation. UI types are marked `@MainActor` explicitly
+- **Why** Matches the code style rule and makes isolation visible in each file. Xcode 26 offers `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`, which hides it
+- **Alternatives** MainActor-by-default for the app target
+
+### D-010 KeyboardShortcuts 3.x
+- **Decision** Depend on `sindresorhus/KeyboardShortcuts` `from: 3.1.0`
+- **Why** Latest major at setup time, supports Swift 6 and macOS 10.15+
+- **Alternatives** 2.x, which is older with no benefit for us

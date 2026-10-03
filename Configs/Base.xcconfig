@@ -1,0 +1,15 @@
+// Shared build settings for all configurations.
+
+SWIFT_VERSION = 6.0
+SWIFT_STRICT_CONCURRENCY = complete
+MACOSX_DEPLOYMENT_TARGET = 15.0
+
+ENABLE_HARDENED_RUNTIME = YES
+CODE_SIGN_STYLE = Automatic
+
+// Overridden in Local.xcconfig. Kept neutral so nothing personal is committed.
+BUNDLE_ID_PREFIX = app.kropic
+DEVELOPMENT_TEAM =
+
+// Optional: a fresh clone without Local.xcconfig still builds (signed to run locally).
+#include? "Local.xcconfig"

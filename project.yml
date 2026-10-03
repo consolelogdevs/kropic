@@ -1,0 +1,41 @@
+name: Kropic
+
+options:
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+
+configFiles:
+  Debug: Configs/Base.xcconfig
+  Release: Configs/Base.xcconfig
+
+packages:
+  KropicCore:
+    path: Packages/KropicCore
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: 3.1.0
+
+targets:
+  Kropic:
+    type: application
+    platform: macOS
+    sources:
+      - App
+    entitlements:
+      path: App/Kropic.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+    dependencies:
+      - package: KropicCore
+      - package: KeyboardShortcuts
+    settings:
+      base:
+        PRODUCT_NAME: Kropic
+        PRODUCT_BUNDLE_IDENTIFIER: $(BUNDLE_ID_PREFIX).kropic
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSUIElement: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Kropic
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
