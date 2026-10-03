@@ -51,3 +51,23 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** Depend on `sindresorhus/KeyboardShortcuts` `from: 3.1.0`
 - **Why** Latest major at setup time, supports Swift 6 and macOS 10.15+
 - **Alternatives** 2.x, which is older with no benefit for us
+
+### D-011 AppDelegate starts AppState
+- **Decision** `AppState` is owned by an `NSApplicationDelegate` (via `@NSApplicationDelegateAdaptor`) and started in `applicationDidFinishLaunching`
+- **Why** The hotkey must be registered at launch, not when the menu is first opened, and opening the onboarding window inside `App.init` is too early
+- **Alternatives** Creating `AppState` as `@State` in the `App` struct and starting it from a view's `.task`, which only runs once the menu is opened
+
+### D-012 Onboarding window is AppKit-hosted
+- **Decision** `OnboardingWindowController` creates an `NSWindow` with an `NSHostingController` for the SwiftUI view
+- **Why** SwiftUI's `openWindow` is only reachable from inside a view, and the hotkey path has none. A menu bar only app also has to call `NSApp.activate()` itself to bring the window forward
+- **Alternatives** A SwiftUI `Window` scene opened through `openWindow`
+
+### D-013 Capture triggers on key up
+- **Decision** The global shortcut fires on key up
+- **Why** By the time the overlay appears in Phase 2, ⌘ and ⇧ are released, so they cannot change the first click or drag
+- **Alternatives** Key down, which feels slightly faster
+
+### D-014 Settings menu item disabled until Phase 5
+- **Decision** "Settings…" is a disabled placeholder
+- **Why** A real Settings window in a menu bar only app needs a workaround to come to the front. Solving it once, together with real content, is cheaper
+- **Alternatives** An empty SwiftUI `Settings` scene opened with `SettingsLink`

@@ -11,6 +11,7 @@ Kropic/
 │   └── Local.xcconfig           DEVELOPMENT_TEAM etc, gitignored
 ├── App/                         macOS app target
 │   ├── KropicApp.swift           entry point, MenuBarExtra
+│   ├── AppDelegate.swift         owns AppState, starts it after launch
 │   ├── AppState.swift           top-level @Observable state and coordination
 │   ├── MenuBar/
 │   ├── Hotkey/
@@ -34,9 +35,9 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 
 **AppState** owns the flow. Idle → selecting → capturing → showing result. It is `@MainActor` and talks to the services below.
 
-**HotkeyService** wraps KeyboardShortcuts and calls AppState when the shortcut fires.
+**HotkeyService** wraps KeyboardShortcuts and calls AppState when the shortcut fires. It listens with the `KeyboardShortcuts.events(.keyUp, for:)` async stream, because `onKeyUp` is slated for deprecation.
 
-**PermissionService** uses `CGPreflightScreenCaptureAccess()` and `CGRequestScreenCaptureAccess()`. The System Settings deep link is `x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture`.
+**PermissionService** uses `CGPreflightScreenCaptureAccess()` and `CGRequestScreenCaptureAccess()`. The System Settings deep link is `x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture` (older form, to be confirmed on macOS 15+; the newer form is `com.apple.settings.PrivacySecurity.extension?Privacy_ScreenCapture`). The onboarding window is AppKit-hosted (`OnboardingWindowController`) so it can be opened from the hotkey path.
 
 **SelectionOverlay**
 - One borderless, transparent `NSPanel` per display, covering the full frame, at a window level above normal windows and the menu bar

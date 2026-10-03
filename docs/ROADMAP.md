@@ -11,9 +11,9 @@ Work one phase at a time. Tick a box only when it is done and verified. Stop at 
 Done when `xcodegen generate` and the build command succeed, the app shows an icon in the menu bar with a Quit item and there is no Dock icon.
 
 ## Phase 1 — Menu bar, hotkey, permission
-- [ ] Menu with "Capture Text", "Settings…" (placeholder) and "Quit"
-- [ ] Global shortcut ⌘⇧2 triggers the same action as "Capture Text"
-- [ ] Screen Recording check before capture. Onboarding window when missing, with the System Settings link and restart button
+- [x] Menu with "Capture Text", "Settings…" (placeholder) and "Quit"
+- [x] Global shortcut ⌘⇧2 triggers the same action as "Capture Text"
+- [x] Screen Recording check before capture. Onboarding window when missing, with the System Settings link and restart button
 
 Done when the shortcut and the menu item both reach the capture entry point and the onboarding appears when permission is missing.
 

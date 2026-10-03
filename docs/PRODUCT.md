@@ -28,6 +28,8 @@ A small, fast menu bar utility. Press a shortcut, select any text on screen (in 
 
 First launch shows a small window that explains in one or two sentences why Screen Recording permission is needed, with a button that opens the right page in System Settings. macOS often requires the app to restart after the permission is granted. The onboarding says this and offers a "Restart Kropic" button.
 
+On macOS 15 and later the System Settings page is named **Screen & System Audio Recording** (Privacy & Security). User-facing text uses that name.
+
 ## Settings (Phase 5)
 
 - Global shortcut
