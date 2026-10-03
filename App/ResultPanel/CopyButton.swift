@@ -1,4 +1,3 @@
-import AppKit
 import SwiftUI
 
 /// Copies `text` to the clipboard and shows "Copied" for a moment.
@@ -10,8 +9,7 @@ struct CopyButton: View {
 
     var body: some View {
         Button(didCopy ? "Copied" : "Copy", systemImage: didCopy ? "checkmark" : "doc.on.doc") {
-            NSPasteboard.general.clearContents()
-            NSPasteboard.general.setString(text, forType: .string)
+            Clipboard.copy(text)
             didCopy = true
             resetTask?.cancel()
             resetTask = Task {

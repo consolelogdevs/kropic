@@ -10,9 +10,14 @@ struct MenuBarContent: View {
         }
         .globalKeyboardShortcut(.captureText)
 
-        // Placeholder until the Settings window lands in Phase 5.
-        Button("Settings…") {}
-            .disabled(true)
+        Button("History…") {
+            appState.showHistory()
+        }
+
+        Button("Settings…") {
+            appState.showSettings()
+        }
+        .keyboardShortcut(",")
 
         Divider()
 

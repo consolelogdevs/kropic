@@ -42,6 +42,7 @@ Done when captures are pixel-accurate on a Retina display and on an external dis
 - [ ] Settings window (see PRODUCT.md)
 - [ ] History of the last 20 results, text only
 - [ ] Launch at login with `SMAppService`
+- [ ] Appearance setting (System, Light, Dark) through AppearanceService
 - [ ] App icon and menu bar icon
 
 ## Phase 6 — Annotate and share (after v1, not yet planned in detail)

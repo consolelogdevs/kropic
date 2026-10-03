@@ -1,9 +1,7 @@
 import Foundation
 
-/// Language names, matching and the remembered target language.
+/// Language names and matching against the languages a provider supports.
 enum LanguageCatalog {
-    private static let lastTargetKey = "lastTargetLanguage"
-
     static func displayName(_ language: Locale.Language) -> String {
         Locale.current.localizedString(forIdentifier: language.minimalIdentifier) ?? language.minimalIdentifier
     }
@@ -30,18 +28,13 @@ enum LanguageCatalog {
         return a.languageCode == b.languageCode && scriptA == scriptB
     }
 
-    /// Last used target, else the system language, else English.
-    static func defaultTarget(in supported: [Locale.Language]) -> Locale.Language? {
-        if let stored = UserDefaults.standard.string(forKey: lastTargetKey),
-           let match = match(Locale.Language(identifier: stored), in: supported) {
+    /// `preferred` (from settings) if supported, else the system language, else English.
+    static func defaultTarget(in supported: [Locale.Language], preferred: String?) -> Locale.Language? {
+        if let preferred, let match = match(Locale.Language(identifier: preferred), in: supported) {
             return match
         }
         return match(Locale.current.language, in: supported)
             ?? match(Locale.Language(identifier: "en"), in: supported)
             ?? supported.first
-    }
-
-    static func rememberTarget(_ language: Locale.Language) {
-        UserDefaults.standard.set(language.minimalIdentifier, forKey: lastTargetKey)
     }
 }

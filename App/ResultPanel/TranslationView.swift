@@ -45,6 +45,10 @@ struct TranslationView: View {
         case .idle:
             EmptyView()
 
+        case .ready:
+            Button("Translate", action: model.translateNow)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
         case .translating:
             ProgressView()
                 .controlSize(.small)
@@ -70,12 +74,12 @@ struct TranslationView: View {
 
         case .needsDownload:
             note("Translating needs a language pack that isn't downloaded yet. The extracted text above is still available.") {
-                Button("Download…", action: model.retry)
+                Button("Download…", action: model.translateNow)
             }
 
         case .failed(let message):
             note(message) {
-                Button("Try Again", action: model.retry)
+                Button("Try Again", action: model.translateNow)
             }
         }
     }

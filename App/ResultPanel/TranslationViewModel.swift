@@ -12,6 +12,8 @@ final class TranslationViewModel {
 
     enum State: Equatable {
         case idle
+        /// Automatic translation is off; waiting for the Translate button.
+        case ready
         case sameLanguage
         case translating
         case translated(String)
@@ -27,24 +29,26 @@ final class TranslationViewModel {
     private(set) var state: State = .idle
 
     var sourceSelection: SourceSelection = .automatic {
-        didSet { if sourceSelection != oldValue { schedule() } }
+        didSet { if sourceSelection != oldValue { requestTranslation() } }
     }
 
     var target: Locale.Language? {
         didSet {
             guard target != oldValue, let target else { return }
-            LanguageCatalog.rememberTarget(target)
-            schedule()
+            settings.lastTargetLanguage = target.minimalIdentifier
+            requestTranslation()
         }
     }
 
     @ObservationIgnored private let translator: any Translating
+    @ObservationIgnored private let settings: AppSettings
     @ObservationIgnored private let detector = LanguageDetector()
     @ObservationIgnored private var text = ""
     @ObservationIgnored private var work: Task<Void, Never>?
 
-    init(translator: any Translating) {
+    init(translator: any Translating, settings: AppSettings) {
         self.translator = translator
+        self.settings = settings
     }
 
     var source: Locale.Language? {
@@ -61,9 +65,9 @@ final class TranslationViewModel {
             detectedLanguage = detector.detect(text).flatMap { LanguageCatalog.match($0.language, in: languages) }
         }
         if target == nil {
-            target = LanguageCatalog.defaultTarget(in: languages)
+            target = LanguageCatalog.defaultTarget(in: languages, preferred: settings.preferredTargetLanguage)
         } else {
-            schedule()
+            requestTranslation()
         }
     }
 
@@ -71,16 +75,27 @@ final class TranslationViewModel {
     func textChanged(_ text: String, debounce: Bool) {
         self.text = text
         detectedLanguage = detector.detect(text).flatMap { LanguageCatalog.match($0.language, in: languages) }
-        schedule(after: debounce ? Self.editDebounce : .zero)
+        requestTranslation(after: debounce ? Self.editDebounce : .zero)
     }
 
-    func retry() {
+    /// The Translate, Try Again and Download buttons.
+    func translateNow() {
         schedule()
     }
 
     func cancel() {
         work?.cancel()
         work = nil
+    }
+
+    /// Translates now or after `delay` when automatic translation is on, otherwise waits for the button.
+    private func requestTranslation(after delay: Duration = .zero) {
+        if settings.translateAutomatically {
+            schedule(after: delay)
+        } else {
+            cancel()
+            state = text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .idle : .ready
+        }
     }
 
     private func schedule(after delay: Duration = .zero) {

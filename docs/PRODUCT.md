@@ -7,9 +7,9 @@ A small, fast menu bar utility. Press a shortcut, select any text on screen (in 
 ## Core user flow
 
 1. **Trigger** — The user clicks the menu bar icon or presses the global shortcut (default ⌘⇧2, configurable in Settings)
-2. **Select** — Every display dims and the cursor becomes a crosshair. The user drags to draw a selection rectangle. A small label shows the selection size
+2. **Select** — The screen under the cursor dims and the cursor becomes a crosshair. The user drags to draw a selection rectangle. A small label shows the selection size
 3. **Adjust** — After the mouse is released the selection stays editable. It can be moved by dragging inside and resized from its edges and corners
-4. **Confirm** — A small checkmark button sits at the bottom right corner of the selection (or above it if there is no room). Clicking it or pressing Enter confirms. Esc cancels and closes the overlay. Dragging outside the selection starts a new one, and a click without dragging clears it. The selection stays on the display where the drag started
+4. **Confirm** — A small checkmark button sits at the bottom right corner of the selection (or above it if there is no room). Clicking it or pressing Enter confirms. Esc or a click outside cancels and closes the overlay
 5. **Result panel** — A floating panel opens near the selected area
    - Left side shows the captured image
    - Right side shows the extracted text, editable, with a copy button
@@ -28,7 +28,9 @@ A small, fast menu bar utility. Press a shortcut, select any text on screen (in 
 
 First launch shows a small window that explains in one or two sentences why Screen Recording permission is needed, with a button that opens the right page in System Settings. macOS often requires the app to restart after the permission is granted. The onboarding says this and offers a "Restart Kropic" button.
 
-On macOS 15 and later the System Settings page is named **Screen & System Audio Recording** (Privacy & Security). User-facing text uses that name.
+## Appearance
+
+Every window and panel exists in a light and a dark version. By default Kropic follows the macOS setting. The user can force Light or Dark in Settings and the change applies to all open windows instantly. The selection overlay looks the same in both, since it always sits on top of a dimmed screen.
 
 ## Settings (Phase 5)
 
@@ -37,6 +39,7 @@ On macOS 15 and later the System Settings page is named **Screen & System Audio 
 - Auto-translate on or off
 - Copy extracted text to clipboard automatically on or off
 - Launch at login
+- Appearance (System, Light or Dark), applied immediately without a restart. Default is System
 - Clear history
 
 ## History (Phase 5)
