@@ -96,3 +96,18 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** The overlay panel sets `ignoresMouseEvents = false` explicitly and reads mouse down, drag and up in `sendEvent`, forwarding display-local points to `SelectionModel`. Esc and Enter come from an app-wide local key monitor while the overlay is open. SwiftUI only draws and sets the cursor
 - **Why** A transparent window lets clicks through wherever the window server sees no content, and SwiftUI's layers do not count, so the overlay was entirely click-through (found with diagnostics in manual testing). Handling input in AppKit also removes any doubt about SwiftUI gestures in a borderless panel
 - **Alternatives** SwiftUI `DragGesture` and `onKeyPress`, which would likely also work once the panel is not click-through
+
+### D-020 OCR test images rendered in memory
+- **Decision** OCR tests draw known text into a `CGImage` with Core Text at test time (`Tests/KropicCoreTests/Support/TestImage.swift`) instead of loading PNG fixtures
+- **Why** No binary files in git, the expected text sits next to the image it produces, and there is no risk of committing a real screenshot with personal content
+- **Alternatives** Committed PNG fixtures, which would be closer to real screenshots (anti-aliasing, UI chrome) and can still be added later for specific regressions
+
+### D-021 Automatic language detection only for OCR
+- **Decision** `RecognizeTextRequest` runs with `automaticallyDetectsLanguage = true` and no explicit `recognitionLanguages`
+- **Why** The Turkish test (ç ğ ı İ ö ş ü) passes exactly with automatic detection and language correction on, so a hand-maintained language list adds nothing yet
+- **Alternatives** Passing the user's preferred languages plus Turkish and English. Revisit if real captures lose diacritics or mix up scripts
+
+### D-022 Own line and paragraph reconstruction
+- **Decision** `TextLayout` in KropicCore rebuilds rows and paragraphs from line positions
+- **Why** Vision's paragraph information (`shouldWrapToNextLine`, `transcript`, `RecognizeDocumentsRequest`) needs macOS 26 and the target is macOS 15
+- **Alternatives** Using the macOS 26 APIs behind `if #available`, which could also fix multi-column text. A candidate for later

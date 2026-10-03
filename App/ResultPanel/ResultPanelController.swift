@@ -7,12 +7,12 @@ final class ResultPanelController {
     private static let gap: CGFloat = 12
     private var panel: ResultPanel?
 
-    func show(_ model: ResultViewModel, near selection: SelectionResult, onClose: @escaping () -> Void) {
+    func show(_ model: ResultViewModel, near selection: SelectionResult, onRetry: @escaping () -> Void, onClose: @escaping () -> Void) {
         close()
 
         let panel = ResultPanel()
         panel.onClose = onClose
-        let hostingController = NSHostingController(rootView: ResultView(model: model))
+        let hostingController = NSHostingController(rootView: ResultView(model: model, onRetry: onRetry))
         panel.contentViewController = hostingController
 
         let contentSize = hostingController.view.fittingSize

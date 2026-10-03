@@ -26,7 +26,7 @@ Kropic/
 │   │   ├── OCR/                 TextRecognizer
 │   │   ├── Language/            LanguageDetector
 │   │   └── Translation/         Translating protocol, shared types
-│   └── Tests/KropicCoreTests/    includes fixture images with known text
+│   └── Tests/KropicCoreTests/    OCR tests render known text into in-memory images
 └── docs/
 ```
 
@@ -54,10 +54,10 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 - Returns a `CGImage` held in memory only
 
 **TextRecognizer** (KropicCore)
-- Prefer the Swift Vision API on macOS 15 (`RecognizeTextRequest`) over the older `VNRecognizeTextRequest` if it covers our needs
-- Accurate recognition level, language correction on, automatic language detection on
-- Sort observations top to bottom then left to right and rebuild line breaks so paragraphs survive
-- Returns text plus per-line confidence
+- Uses the Swift Vision API (`RecognizeTextRequest`, macOS 15). Accurate recognition level, language correction on, automatic language detection on. No explicit language list: Turkish diacritics survive with automatic detection (see tests)
+- `TextLayout` rebuilds the text: pieces at the same height form a row (joined left to right), rows go top to bottom, a gap larger than 0.8 × the median line height becomes a blank line. Vision's own paragraph info (`shouldWrapToNextLine`, `RecognizeDocumentsRequest`) is macOS 26 only
+- Known limitation: side-by-side columns are interleaved row by row
+- Returns `RecognizedText`: the rebuilt text plus each line with its confidence and normalized position
 
 **LanguageDetector** (KropicCore) uses `NLLanguageRecognizer` and returns the dominant language. Short or mixed text can be detected wrongly, so the UI always allows an override.
 
@@ -76,5 +76,5 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 
 ## Testing
 
-- KropicCore has unit tests. OCR runs against fixture images with known Turkish and English text. Language detection and coordinate conversion have plain unit tests
+- KropicCore has unit tests. OCR runs against images rendered in memory with Core Text from known Turkish and English text (no fixture files). Language detection and coordinate conversion have plain unit tests
 - UI, permissions and overlay behavior are tested by hand using the checklist at the end of each phase

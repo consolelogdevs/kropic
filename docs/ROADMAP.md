@@ -27,9 +27,9 @@ Done when the shortcut and the menu item both reach the capture entry point and 
 Done when captures are pixel-accurate on a Retina display and on an external display.
 
 ## Phase 3 — OCR
-- [ ] TextRecognizer in KropicCore with fixture-based tests (Turkish and English)
-- [ ] Extracted text shown in the panel, editable, with a copy button
-- [ ] Loading state and "No text found" state
+- [x] TextRecognizer in KropicCore with tests on rendered Turkish and English text
+- [x] Extracted text shown in the panel, editable, with a copy button
+- [x] Loading state and "No text found" state
 
 ## Phase 4 — Language detection and translation
 - [ ] LanguageDetector in KropicCore with tests

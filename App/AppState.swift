@@ -1,4 +1,5 @@
 import CoreGraphics
+import KropicCore
 import Observation
 import os
 
@@ -13,6 +14,8 @@ final class AppState {
     private let capture = CaptureService()
     private let resultPanel = ResultPanelController()
     private let focus = FocusRestorer()
+    private let recognizer = TextRecognizer()
+    private var recognition: Task<Void, Never>?
     private let logger = Logger(subsystem: "app.kropic", category: "AppState")
 
     init() {
@@ -41,6 +44,8 @@ final class AppState {
     }
 
     private func runCapture() async {
+        recognition?.cancel()
+        recognition = nil
         resultPanel.close()
         focus.activateKropic()
         guard let selection = await overlay.select() else {
@@ -49,15 +54,34 @@ final class AppState {
             return
         }
 
-        let content: ResultViewModel.Content
+        let model: ResultViewModel
+        let image: CGImage
         do {
-            let image = try await capture.capture(selection.rect, on: selection.displayID)
-            content = .image(image, scale: CGFloat(image.width) / selection.rect.width)
+            image = try await capture.capture(selection.rect, on: selection.displayID)
+            model = ResultViewModel(image: image, scale: CGFloat(image.width) / selection.rect.width)
         } catch {
             logger.error("Capture failed: \(String(describing: error))")
-            content = .failure(error.localizedDescription)
+            showResult(ResultViewModel(captureFailure: error.localizedDescription), near: selection)
+            return
         }
-        resultPanel.show(ResultViewModel(content: content), near: selection) { [weak self] in
+
+        showResult(model, near: selection)
+        recognition = Task { [recognizer] in
+            do throws(OCRError) {
+                model.show(try await recognizer.recognize(image))
+            } catch {
+                if error != .cancelled {
+                    model.showFailure(error.localizedDescription)
+                }
+            }
+        }
+    }
+
+    private func showResult(_ model: ResultViewModel, near selection: SelectionResult) {
+        resultPanel.show(model, near: selection) { [weak self] in
+            self?.startCapture()
+        } onClose: { [weak self] in
+            self?.recognition?.cancel()
             self?.focus.restore()
         }
     }
