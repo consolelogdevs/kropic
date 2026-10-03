@@ -71,3 +71,28 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** "Settings…" is a disabled placeholder
 - **Why** A real Settings window in a menu bar only app needs a workaround to come to the front. Solving it once, together with real content, is cheaper
 - **Alternatives** An empty SwiftUI `Settings` scene opened with `SettingsLink`
+
+### D-015 Capture through a content filter, not captureImage(in:)
+- **Decision** Capture with `SCScreenshotManager.captureImage(contentFilter:configuration:)`, a display filter that excludes Kropic's own app, and `sourceRect` set to the selection
+- **Why** `captureImage(in:)` needs macOS 15.2 (target is 15.0) and cannot exclude windows. Excluding our app means the overlay never appears in the image and does not have to be hidden first
+- **Alternatives** `captureImage(in:)` behind an availability check, hiding the overlay and waiting a frame before capturing
+
+### D-016 Activate Kropic during selection, restore focus afterwards
+- **Decision** Kropic activates itself when the overlay opens and re-activates the previously frontmost app on cancel or when the result panel closes (`FocusRestorer`). Overlay hosting views accept the first click
+- **Why** The first attempt used `.nonactivatingPanel` panels so the user's app would stay active. In manual testing the overlay appeared but SwiftUI received no mouse or hover events while Kropic was inactive, so nothing could be drawn
+- **Alternatives** Non-activating panels with AppKit mouse handling instead of SwiftUI gestures
+
+### D-017 Every display dims, outside drag starts a new selection
+- **Decision** All displays get an overlay. The selection lives on the display where the drag starts. Dragging outside an existing selection replaces it, a click without dragging clears it, and only Esc cancels
+- **Why** Matches macOS's own screenshot tool and most capture apps, so it feels familiar
+- **Alternatives** Only the display under the cursor dims; a click outside cancels
+
+### D-018 Pure geometry lives in KropicCore
+- **Decision** Coordinate conversion, selection math (normalise, clamp, move, resize, hit testing) and placement (confirm button, result panel) live in `KropicCore/Geometry`
+- **Why** The app target has no test target. These functions only need CoreGraphics, are easy to get wrong (negative display origins, flipped y) and are fully unit-testable there
+- **Alternatives** Keeping them in the app target and adding an app test target
+
+### D-019 Overlay mouse input through AppKit, panel never click-through
+- **Decision** The overlay panel sets `ignoresMouseEvents = false` explicitly and reads mouse down, drag and up in `sendEvent`, forwarding display-local points to `SelectionModel`. Esc and Enter come from an app-wide local key monitor while the overlay is open. SwiftUI only draws and sets the cursor
+- **Why** A transparent window lets clicks through wherever the window server sees no content, and SwiftUI's layers do not count, so the overlay was entirely click-through (found with diagnostics in manual testing). Handling input in AppKit also removes any doubt about SwiftUI gestures in a borderless panel
+- **Alternatives** SwiftUI `DragGesture` and `onKeyPress`, which would likely also work once the panel is not click-through

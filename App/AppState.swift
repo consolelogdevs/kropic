@@ -1,4 +1,4 @@
-import AppKit
+import CoreGraphics
 import Observation
 import os
 
@@ -9,6 +9,10 @@ final class AppState {
     private let permissions = PermissionService()
     private let hotkeys = HotkeyService()
     private let onboarding: OnboardingWindowController
+    private let overlay = SelectionOverlayController()
+    private let capture = CaptureService()
+    private let resultPanel = ResultPanelController()
+    private let focus = FocusRestorer()
     private let logger = Logger(subsystem: "app.kropic", category: "AppState")
 
     init() {
@@ -30,16 +34,31 @@ final class AppState {
             onboarding.show()
             return
         }
-        logger.info("Capture requested")
-        showCapturePlaceholder()
+        guard !overlay.isPresented else { return }
+        Task {
+            await runCapture()
+        }
     }
 
-    // TODO(Phase 2): replace with the selection overlay.
-    private func showCapturePlaceholder() {
-        let alert = NSAlert()
-        alert.messageText = "Capture would start here"
-        alert.informativeText = "The selection overlay arrives in Phase 2."
-        NSApp.activate()
-        alert.runModal()
+    private func runCapture() async {
+        resultPanel.close()
+        focus.activateKropic()
+        guard let selection = await overlay.select() else {
+            logger.info("Selection cancelled")
+            focus.restore()
+            return
+        }
+
+        let content: ResultViewModel.Content
+        do {
+            let image = try await capture.capture(selection.rect, on: selection.displayID)
+            content = .image(image, scale: CGFloat(image.width) / selection.rect.width)
+        } catch {
+            logger.error("Capture failed: \(String(describing: error))")
+            content = .failure(error.localizedDescription)
+        }
+        resultPanel.show(ResultViewModel(content: content), near: selection) { [weak self] in
+            self?.focus.restore()
+        }
     }
 }

@@ -7,9 +7,9 @@ A small, fast menu bar utility. Press a shortcut, select any text on screen (in 
 ## Core user flow
 
 1. **Trigger** — The user clicks the menu bar icon or presses the global shortcut (default ⌘⇧2, configurable in Settings)
-2. **Select** — The screen under the cursor dims and the cursor becomes a crosshair. The user drags to draw a selection rectangle. A small label shows the selection size
+2. **Select** — Every display dims and the cursor becomes a crosshair. The user drags to draw a selection rectangle. A small label shows the selection size
 3. **Adjust** — After the mouse is released the selection stays editable. It can be moved by dragging inside and resized from its edges and corners
-4. **Confirm** — A small checkmark button sits at the bottom right corner of the selection (or above it if there is no room). Clicking it or pressing Enter confirms. Esc or a click outside cancels and closes the overlay
+4. **Confirm** — A small checkmark button sits at the bottom right corner of the selection (or above it if there is no room). Clicking it or pressing Enter confirms. Esc cancels and closes the overlay. Dragging outside the selection starts a new one, and a click without dragging clears it. The selection stays on the display where the drag started
 5. **Result panel** — A floating panel opens near the selected area
    - Left side shows the captured image
    - Right side shows the extracted text, editable, with a copy button

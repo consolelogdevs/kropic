@@ -22,6 +22,7 @@ Kropic/
 │   └── Settings/
 ├── Packages/KropicCore/          local Swift package, no AppKit or UIKit imports
 │   ├── Sources/KropicCore/
+│   │   ├── Geometry/            coordinate conversion, selection math, placement
 │   │   ├── OCR/                 TextRecognizer
 │   │   ├── Language/            LanguageDetector
 │   │   └── Translation/         Translating protocol, shared types
@@ -40,15 +41,16 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 **PermissionService** uses `CGPreflightScreenCaptureAccess()` and `CGRequestScreenCaptureAccess()`. The System Settings deep link is `x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture` (older form, to be confirmed on macOS 15+; the newer form is `com.apple.settings.PrivacySecurity.extension?Privacy_ScreenCapture`). The onboarding window is AppKit-hosted (`OnboardingWindowController`) so it can be opened from the hotkey path.
 
 **SelectionOverlay**
-- One borderless, transparent `NSPanel` per display, covering the full frame, at a window level above normal windows and the menu bar
+- One borderless, transparent `NSPanel` per display, covering the full frame, at `.screenSaver` level (above the menu bar and Dock). Every display dims; the selection belongs to the display where the drag starts
+- A shared `SelectionModel` (`@Observable`) holds the selection for all displays
 - Hosts a SwiftUI view that draws the dim layer, the selection rectangle, resize handles and the checkmark button
-- Must become key so it receives Esc and Enter
-- Returns the selected rectangle in global screen coordinates plus the display it belongs to
+- Kropic activates itself while the overlay is open (`FocusRestorer`) so the panels receive mouse and key events, and hands focus back to the previous app on cancel or when the result panel closes. Hosting views accept the first click so a drag on a non-key display works. Keys are intercepted in the panel's `sendEvent`
+- `SelectionOverlayController.select()` returns the selected rectangle in display-local points plus the display ID and frames, or `nil` on cancel
 
 **CaptureService**
-- Uses ScreenCaptureKit (`SCShareableContent`, `SCContentFilter`, `SCScreenshotManager`)
+- Uses ScreenCaptureKit: `SCShareableContent` → `SCContentFilter(display:excludingApplications:exceptingWindows:)` → `SCScreenshotManager.captureImage(contentFilter:configuration:)` (macOS 14+). Not `captureImage(in:)`, which needs macOS 15.2 and cannot exclude windows
 - Exclude Kropic's own windows from the capture so the overlay never appears in the image
-- Coordinate pitfalls. AppKit uses a bottom-left origin and points. ScreenCaptureKit and CGImage use a top-left origin and pixels. Convert per display using its frame and backing scale factor. Write unit-testable helpers for this conversion
+- Coordinate pitfalls. AppKit uses a bottom-left origin in global points. `SCStreamConfiguration.sourceRect` is in display-local **points** with a top-left origin; only the output `width`/`height` are pixels (points × `SCContentFilter.pointPixelScale`). SwiftUI views covering a display already use display-local top-left points, so the selection needs no conversion for capture. Helpers live in `KropicCore/Geometry/ScreenGeometry` with unit tests
 - Returns a `CGImage` held in memory only
 
 **TextRecognizer** (KropicCore)
@@ -64,7 +66,7 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 - `AppleTranslationProvider` lives in the app target. On macOS 15 a `TranslationSession` is only obtained through the SwiftUI `.translationTask` modifier, so the provider is driven by a view in the result panel. If the SDK on this machine allows creating a session directly, use that behind the same protocol and record it in DECISIONS.md
 - Check `LanguageAvailability` before translating to tell apart installed, downloadable and unsupported pairs
 
-**ResultPanel** is a floating `NSPanel` positioned next to the selection and clamped to the visible frame of that display. Content is SwiftUI. The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
+**ResultPanel** is a floating `NSPanel` positioned next to the selection (right, left, below, above) and clamped to the visible frame of that display (`Placement.panelFrame`). Content is SwiftUI. The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
 
 ## Concurrency
 

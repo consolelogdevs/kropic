@@ -18,11 +18,11 @@ Done when `xcodegen generate` and the build command succeed, the app shows an ic
 Done when the shortcut and the menu item both reach the capture entry point and the onboarding appears when permission is missing.
 
 ## Phase 2 — Selection overlay and capture
-- [ ] Overlay on the display under the cursor with dim layer and crosshair
-- [ ] Draw, move and resize the selection. Size label
-- [ ] Checkmark button and Enter confirm. Esc and outside click cancel
-- [ ] Capture the region with ScreenCaptureKit, excluding Kropic's windows
-- [ ] Result panel opens next to the selection and shows the image
+- [x] Overlay on every display with dim layer and crosshair
+- [x] Draw, move and resize the selection. Size label
+- [x] Checkmark button and Enter confirm. Esc cancels, dragging outside starts a new selection
+- [x] Capture the region with ScreenCaptureKit, excluding Kropic's windows
+- [x] Result panel opens next to the selection and shows the image
 
 Done when captures are pixel-accurate on a Retina display and on an external display.
 
@@ -43,3 +43,10 @@ Done when captures are pixel-accurate on a Retina display and on an external dis
 - [ ] History of the last 20 results, text only
 - [ ] Launch at login with `SMAppService`
 - [ ] App icon and menu bar icon
+
+## Phase 6 — Annotate and share (after v1, not yet planned in detail)
+- [ ] Toolbar on the selection before confirming: arrow, rectangle, text, highlight, undo
+- [ ] Annotations are drawn onto the captured image in memory
+- [ ] Copy the annotated image to the clipboard and share it through the macOS share menu
+
+Open questions to settle before planning: annotate in the overlay (before ✓) or in the result panel (after capture); whether sharing fits the "images never touch disk" rule (D-005), since some share targets may write files on their side.
