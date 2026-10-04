@@ -56,9 +56,9 @@ Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with ex
 - [x] Selection overlay: dim, outline, handles, size label, cancel and confirm bar, hint pill
 - [x] Onboarding window with numbered steps and "Not Now"
 - [x] Settings window: sections and order from the spec, subtitles, Appearance picker, footer note
-- [ ] Menu bar: crop icon, Recent Translations submenu, About Kropic
-- [ ] History window restyled with the tokens (no design screen)
-- [ ] Placeholder app icon redrawn with the crop glyph
+- [x] Menu bar: crop icon, Recent Translations submenu, About Kropic
+- [x] History window restyled with the tokens (no design screen)
+- [x] Placeholder app icon redrawn with the crop glyph
 
 Done when every screen matches its design in light and dark mode.
 

@@ -7,26 +7,30 @@ struct HistoryRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(entry.text)
+            Text(verbatim: entry.text)
+                .font(.kropicBody)
+                .foregroundStyle(Color.textPrimary)
                 .lineLimit(2)
             if let translation = entry.translation {
-                Text(translation)
+                Text(verbatim: translation)
+                    .font(.kropicBody)
+                    .foregroundStyle(Color.textSecondary)
                     .lineLimit(2)
-                    .foregroundStyle(.secondary)
             }
             HStack {
-                Text(languages)
+                Text(verbatim: languages)
                 Spacer()
                 if isCopied {
                     Label("Copied", systemImage: "checkmark")
+                        .foregroundStyle(Color.accent)
                 } else {
                     Text(entry.date, format: .relative(presentation: .named))
                 }
             }
-            .font(.caption)
-            .foregroundStyle(.tertiary)
+            .font(.kropicCaption)
+            .foregroundStyle(Color.textSecondary)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 6)
         .contentShape(Rectangle())
     }
 

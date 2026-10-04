@@ -226,3 +226,8 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** The overlay's hint pill shows on every capture, on the display under the cursor. The first-use counter from D-044 is removed
 - **Why** Product decision after testing: the gestures stay discoverable at all times. Overrides design/README.md's "shown only on the first few uses"
 - **Alternatives** Showing it only on the first 3 uses (D-044), or a setting to hide it
+
+### D-046 Crop glyph for the menu bar and the placeholder icon
+- **Decision** The menu bar uses the `crop` SF Symbol. `Scripts/make-placeholder-icon.swift` now draws the same crop shape in white on the design's accent blue, with Core Graphics paths. Supersedes the viewfinder glyph from D-031
+- **Why** The design uses the crop glyph in the menu bar, the result panel header and the onboarding tile. SF Symbols may be used in the menu bar but not in app icons, so the icon draws the shape itself
+- **Alternatives** Keeping the viewfinder until the final icon arrives

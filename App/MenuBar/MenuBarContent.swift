@@ -1,6 +1,7 @@
 import KeyboardShortcuts
 import SwiftUI
 
+/// The menu bar menu in the spec's order. A real `NSMenu`, drawn by macOS.
 struct MenuBarContent: View {
     let appState: AppState
 
@@ -10,14 +11,22 @@ struct MenuBarContent: View {
         }
         .globalKeyboardShortcut(.captureText)
 
-        Button("History…") {
+        Divider()
+
+        RecentTranslationsMenu(history: appState.history) {
             appState.showHistory()
         }
+
+        Divider()
 
         Button("Settings…") {
             appState.showSettings()
         }
         .keyboardShortcut(",")
+
+        Button("About Kropic") {
+            appState.showAbout()
+        }
 
         Divider()
 

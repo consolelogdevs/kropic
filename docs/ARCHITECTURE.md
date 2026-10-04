@@ -13,7 +13,7 @@ Kropic/
 │   ├── KropicApp.swift           entry point, MenuBarExtra
 │   ├── AppDelegate.swift         owns AppState, starts it after launch
 │   ├── AppState.swift           top-level @Observable state and coordination
-│   ├── MenuBar/
+│   ├── MenuBar/                 MenuBarContent, RecentTranslationsMenu (last 5, Show All…)
 │   ├── Hotkey/
 │   ├── Permissions/             Screen Recording check, onboarding view
 │   ├── Windows/                 HostingWindowController (onboarding, settings, history)

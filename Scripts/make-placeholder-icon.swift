@@ -24,52 +24,43 @@ func render(pixels: Int) -> Data {
     context.saveGState()
     context.setShadow(offset: CGSize(width: 0, height: -12), blur: 28, color: CGColor(gray: 0, alpha: 0.3))
     context.addPath(bodyPath)
-    context.setFillColor(CGColor(red: 0.23, green: 0.25, blue: 0.85, alpha: 1))
+    context.setFillColor(CGColor(red: 0.0, green: 0.38, blue: 0.80, alpha: 1))
     context.fillPath()
     context.restoreGState()
 
     context.saveGState()
     context.addPath(bodyPath)
     context.clip()
+    // The design's accent blue (#0062CC), slightly lighter at the top.
     let gradient = CGGradient(
         colorsSpace: CGColorSpaceCreateDeviceRGB(),
         colors: [
-            CGColor(red: 0.33, green: 0.52, blue: 1.0, alpha: 1),
-            CGColor(red: 0.23, green: 0.25, blue: 0.85, alpha: 1),
+            CGColor(red: 0.10, green: 0.47, blue: 0.88, alpha: 1),
+            CGColor(red: 0.0, green: 0.38, blue: 0.80, alpha: 1),
         ] as CFArray,
         locations: [0, 1]
     )!
     context.drawLinearGradient(gradient, start: CGPoint(x: 512, y: 924), end: CGPoint(x: 512, y: 100), options: [])
     context.restoreGState()
 
-    // Viewfinder corners.
+    // Crop glyph, the same shape as the onboarding tile and the menu bar icon:
+    // two overlapping right angles on a 16-unit grid ("M4 1v11h11" and "M1 4h11v11").
+    let unit: CGFloat = 30
+    let origin = CGPoint(x: 512 - 8 * unit, y: 512 + 8 * unit)
+    func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+        CGPoint(x: origin.x + x * unit, y: origin.y - y * unit)
+    }
     context.setStrokeColor(CGColor(gray: 1, alpha: 1))
-    context.setLineWidth(46)
+    context.setLineWidth(1.6 * unit)
     context.setLineCap(.round)
     context.setLineJoin(.round)
-    let frame = CGRect(x: 260, y: 260, width: 504, height: 504)
-    let arm: CGFloat = 130
-    let corners: [(CGPoint, CGFloat, CGFloat)] = [
-        (CGPoint(x: frame.minX, y: frame.maxY), 1, -1),
-        (CGPoint(x: frame.maxX, y: frame.maxY), -1, -1),
-        (CGPoint(x: frame.minX, y: frame.minY), 1, 1),
-        (CGPoint(x: frame.maxX, y: frame.minY), -1, 1),
-    ]
-    for (corner, dx, dy) in corners {
-        context.move(to: CGPoint(x: corner.x + dx * arm, y: corner.y))
-        context.addLine(to: corner)
-        context.addLine(to: CGPoint(x: corner.x, y: corner.y + dy * arm))
-    }
+    context.move(to: point(4, 1))
+    context.addLine(to: point(4, 12))
+    context.addLine(to: point(15, 12))
+    context.move(to: point(1, 4))
+    context.addLine(to: point(12, 4))
+    context.addLine(to: point(12, 15))
     context.strokePath()
-
-    // Three text lines.
-    context.setFillColor(CGColor(gray: 1, alpha: 1))
-    let lines: [(y: CGFloat, width: CGFloat)] = [(586, 300), (494, 300), (402, 190)]
-    for line in lines {
-        let rect = CGRect(x: 362, y: line.y, width: line.width, height: 44)
-        context.addPath(CGPath(roundedRect: rect, cornerWidth: 22, cornerHeight: 22, transform: nil))
-    }
-    context.fillPath()
 
     NSGraphicsContext.restoreGraphicsState()
     return rep.representation(using: .png, properties: [:])!

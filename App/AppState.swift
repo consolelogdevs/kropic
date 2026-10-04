@@ -1,3 +1,4 @@
+import AppKit
 import CoreGraphics
 import KropicCore
 import Observation
@@ -11,7 +12,7 @@ final class AppState {
     private let permissions = PermissionService()
     private let hotkeys = HotkeyService()
     private let launchAtLogin = LaunchAtLogin()
-    private let history = HistoryViewModel(store: HistoryStore(fileURL: HistoryStore.defaultFileURL()))
+    let history = HistoryViewModel(store: HistoryStore(fileURL: HistoryStore.defaultFileURL()))
     private var onboardingWindow: HostingWindowController<OnboardingView>?
     private var settingsWindow: HostingWindowController<SettingsView>?
     private var historyWindow: HostingWindowController<HistoryView>?
@@ -36,6 +37,15 @@ final class AppState {
         if !permissions.hasScreenRecordingAccess {
             showOnboarding()
         }
+        // Load history now so the menu's Recent Translations are there on first open.
+        Task { [history] in
+            await history.reload()
+        }
+    }
+
+    func showAbout() {
+        NSApp.activate()
+        NSApp.orderFrontStandardAboutPanel(nil)
     }
 
     func startCapture() {

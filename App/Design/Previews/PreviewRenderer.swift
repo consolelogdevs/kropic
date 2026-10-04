@@ -27,6 +27,8 @@ enum PreviewRenderer {
             Entry(name: "Overlay", view: AnyView(OverlayPreview())),
             Entry(name: "Onboarding", view: AnyView(OnboardingPreview())),
             Entry(name: "Settings", view: AnyView(SettingsPreview())),
+            Entry(name: "History", view: AnyView(HistoryPreview.filled)),
+            Entry(name: "HistoryEmpty", view: AnyView(HistoryPreview.empty)),
         ]
     }
 

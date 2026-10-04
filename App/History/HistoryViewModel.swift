@@ -44,4 +44,10 @@ final class HistoryViewModel {
             self?.copiedEntryID = nil
         }
     }
+
+    #if DEBUG
+    func setPreview(entries: [HistoryEntry]) {
+        self.entries = entries
+    }
+    #endif
 }
