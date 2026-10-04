@@ -17,16 +17,6 @@
     "%@ · detected" : {
 
     },
-    "%lld × %lld" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld × %2$lld"
-          }
-        }
-      }
-    },
     "After you turn it on, macOS usually needs Kropic to restart." : {
 
     },
@@ -34,6 +24,9 @@
 
     },
     "Apple Translation · on device" : {
+
+    },
+    "Cancel (Esc)" : {
 
     },
     "Capture (Return)" : {
@@ -103,6 +96,15 @@
 
     },
     "Download…" : {
+
+    },
+    "Drag edges to resize" : {
+
+    },
+    "Drag to select" : {
+
+    },
+    "Enter to confirm" : {
 
     },
     "Esc to cancel" : {

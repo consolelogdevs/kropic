@@ -1,12 +1,16 @@
 import KropicCore
 import SwiftUI
 
-/// The overlay content for one display: dim layer, selection chrome, confirm button and cursor.
+/// The overlay content for one display: dim layer, selection chrome, action bar, hint and cursor.
 /// Mouse dragging is handled by `SelectionOverlayPanel`, not by a SwiftUI gesture.
 struct SelectionOverlayView: View {
     let model: SelectionModel
     let displayID: CGDirectDisplayID
+    let showsHint: Bool
+    /// Height of the menu bar area at the top of this display.
+    let hintTopInset: CGFloat
     let onConfirm: () -> Void
+    let onCancel: () -> Void
 
     @State private var hoverTarget: SelectionModel.HitTarget = .outside
 
@@ -27,26 +31,20 @@ struct SelectionOverlayView: View {
                     }
                     .pointerStyle(pointerStyle)
 
-                if let frame = model.confirmButtonFrame(on: displayID, bounds: bounds) {
-                    confirmButton
+                if showsHint {
+                    SelectionHintPill()
+                        .allowsHitTesting(false)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, hintTopInset + 12)
+                }
+
+                if let frame = model.actionBarFrame(on: displayID, bounds: bounds) {
+                    SelectionActionBar(onCancel: onCancel, onConfirm: onConfirm)
                         .position(x: frame.midX, y: frame.midY)
                 }
             }
         }
         .ignoresSafeArea()
-    }
-
-    private var confirmButton: some View {
-        Button(action: onConfirm) {
-            Image(systemName: "checkmark")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(.white)
-                .frame(width: SelectionModel.confirmButtonSize.width, height: SelectionModel.confirmButtonSize.height)
-                .background(Circle().fill(Color.accentColor))
-                .shadow(radius: 2)
-        }
-        .buttonStyle(.plain)
-        .help("Capture (Return)")
     }
 
     private var pointerStyle: PointerStyle {

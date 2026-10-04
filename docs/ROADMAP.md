@@ -53,7 +53,7 @@ Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with ex
 - [x] Result panel shell: custom header and footer, 760 pt wide layout, image column with caption, grows for long text
 - [x] Result panel states: main, loading with placeholder bars, no text, language pack notice (notice first, then Apple's prompt)
 - [x] Result panel features: swap languages, capture again, ⌘C and ⌘⇧C
-- [ ] Selection overlay: dim, outline, handles, size label, cancel and confirm bar, hint pill on first uses
+- [x] Selection overlay: dim, outline, handles, size label, cancel and confirm bar, hint pill on first uses
 - [ ] Onboarding window with numbered steps and "Not Now"
 - [ ] Settings window: sections and order from the spec, subtitles, Appearance picker, footer note
 - [ ] Menu bar: crop icon, Recent Translations submenu, About Kropic

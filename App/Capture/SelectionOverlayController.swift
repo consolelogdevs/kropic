@@ -4,6 +4,10 @@ import SwiftUI
 /// Puts an overlay on every display and waits until the user confirms or cancels.
 @MainActor
 final class SelectionOverlayController {
+    /// The hint pill is shown during this many first uses.
+    static let hintUses = 3
+
+    private let settings: AppSettings
     private var panels: [SelectionOverlayPanel] = []
     private var model = SelectionModel()
     private var continuation: CheckedContinuation<SelectionResult?, Never>?
@@ -11,6 +15,10 @@ final class SelectionOverlayController {
     private var dragStart: CGPoint?
 
     var isPresented: Bool { continuation != nil }
+
+    init(settings: AppSettings) {
+        self.settings = settings
+    }
 
     /// Returns the confirmed selection, or `nil` when the user cancels.
     func select() async -> SelectionResult? {
@@ -23,6 +31,8 @@ final class SelectionOverlayController {
     private func present() {
         model = SelectionModel()
         let mouseLocation = NSEvent.mouseLocation
+        let showsHint = settings.overlayUses < Self.hintUses
+        settings.overlayUses += 1
 
         for screen in NSScreen.screens {
             guard let displayID = screen.displayID else { continue }
@@ -32,9 +42,15 @@ final class SelectionOverlayController {
                 self?.handleMouse(phase, at: location, on: displayID, bounds: bounds) ?? false
             }
 
-            let view = SelectionOverlayView(model: model, displayID: displayID) { [weak self] in
-                self?.confirm()
-            }
+            let view = SelectionOverlayView(
+                model: model,
+                displayID: displayID,
+                showsHint: showsHint && screen.frame.contains(mouseLocation),
+                // The panel covers the menu bar; the hint goes just below it.
+                hintTopInset: screen.frame.maxY - screen.visibleFrame.maxY,
+                onConfirm: { [weak self] in self?.confirm() },
+                onCancel: { [weak self] in self?.finish(with: nil) }
+            )
             let hostingView = FirstMouseHostingView(rootView: view)
             // The panel's size is fixed to the display; never let SwiftUI resize it.
             hostingView.sizingOptions = []
@@ -70,7 +86,7 @@ final class SelectionOverlayController {
     private func handleMouse(_ phase: SelectionOverlayPanel.MousePhase, at location: CGPoint, on displayID: CGDirectDisplayID, bounds: CGRect) -> Bool {
         switch phase {
         case .down:
-            if let button = model.confirmButtonFrame(on: displayID, bounds: bounds), button.contains(location) {
+            if let bar = model.actionBarFrame(on: displayID, bounds: bounds), bar.contains(location) {
                 return false
             }
             dragStart = location

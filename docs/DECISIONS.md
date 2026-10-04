@@ -216,3 +216,8 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** `mutedBackground` (#EEEEF0 light, #2C2C2E dark) joins the asset catalog for translation states without a translation, such as "Translation starts automatically when the text is ready"
 - **Why** The Loading artboard uses this color, but design/README.md's token table does not list it
 - **Alternatives** Reusing `chipBackground`, which is darker in dark mode
+
+### D-044 Overlay always in the light appearance, hint for 3 uses
+- **Decision** Overlay panels set `appearance = .aqua`, so their tokens (accent, accent fill) always resolve to the light values. The hint pill shows during the first 3 overlays, counted in `AppSettings.overlayUses`, on the display under the cursor only
+- **Why** design/README.md specifies one overlay look for both themes, since it always sits over a dimmed screen. "First few uses" needed a number; 3 is enough to learn four gestures without nagging
+- **Alternatives** Separate fixed color constants for the overlay, or a hint that never goes away

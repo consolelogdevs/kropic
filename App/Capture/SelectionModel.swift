@@ -34,12 +34,14 @@ final class SelectionModel {
         return rect.width >= Self.minimumSize && rect.height >= Self.minimumSize
     }
 
-    static let confirmButtonSize = CGSize(width: 32, height: 32)
+    /// Cancel and confirm, 32 pt each, with 4 pt padding and gap.
+    static let actionBarSize = CGSize(width: 76, height: 40)
+    static let actionBarGap: CGFloat = 10
 
-    /// Where the confirm button sits on this display, or `nil` when it is hidden.
-    func confirmButtonFrame(on displayID: CGDirectDisplayID, bounds: CGRect) -> CGRect? {
+    /// Where the cancel and confirm bar sits on this display, or `nil` when it is hidden.
+    func actionBarFrame(on displayID: CGDirectDisplayID, bounds: CGRect) -> CGRect? {
         guard let rect = rect(on: displayID), canConfirm, !isDragging else { return nil }
-        return Placement.confirmButtonFrame(size: Self.confirmButtonSize, selection: rect, bounds: bounds, gap: 8)
+        return Placement.confirmButtonFrame(size: Self.actionBarSize, selection: rect, bounds: bounds, gap: Self.actionBarGap)
     }
 
     func rect(on displayID: CGDirectDisplayID) -> CGRect? {
@@ -99,4 +101,11 @@ final class SelectionModel {
         rect = nil
         return .drawing(start: point)
     }
+
+    #if DEBUG
+    func setPreview(displayID: CGDirectDisplayID, rect: CGRect) {
+        self.displayID = displayID
+        self.rect = rect
+    }
+    #endif
 }

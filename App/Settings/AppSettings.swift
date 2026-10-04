@@ -12,6 +12,7 @@ final class AppSettings {
         static let copyTextAutomatically = "copyTextAutomatically"
         static let saveHistory = "saveHistory"
         static let appearance = "appearance"
+        static let overlayUses = "overlayUses"
     }
 
     @ObservationIgnored private let defaults: UserDefaults
@@ -37,6 +38,11 @@ final class AppSettings {
         didSet { defaults.set(saveHistory, forKey: Key.saveHistory) }
     }
 
+    /// How often the selection overlay has been opened, for the first-use hint.
+    var overlayUses: Int {
+        didSet { defaults.set(overlayUses, forKey: Key.overlayUses) }
+    }
+
     /// Applied immediately to every window through `AppearanceService`.
     var appearance: AppearanceMode {
         didSet {
@@ -57,6 +63,7 @@ final class AppSettings {
         translateAutomatically = defaults.bool(forKey: Key.translateAutomatically)
         copyTextAutomatically = defaults.bool(forKey: Key.copyTextAutomatically)
         saveHistory = defaults.bool(forKey: Key.saveHistory)
+        overlayUses = defaults.integer(forKey: Key.overlayUses)
         appearance = defaults.string(forKey: Key.appearance).flatMap(AppearanceMode.init(rawValue:)) ?? .system
     }
 

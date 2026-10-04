@@ -16,7 +16,7 @@ final class AppState {
     private var settingsWindow: HostingWindowController<SettingsView>?
     private var historyWindow: HostingWindowController<HistoryView>?
     private var currentResult: ResultViewModel?
-    private let overlay = SelectionOverlayController()
+    private let overlay: SelectionOverlayController
     private let capture = CaptureService()
     private let resultPanel = ResultPanelController()
     private let focus = FocusRestorer()
@@ -26,6 +26,7 @@ final class AppState {
 
     init() {
         let permissions = permissions
+        overlay = SelectionOverlayController(settings: settings)
         onboarding = HostingWindowController(title: String(localized: "Welcome to Kropic")) {
             OnboardingView(permissions: permissions)
         }

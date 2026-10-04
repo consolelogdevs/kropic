@@ -30,6 +30,9 @@ final class SelectionOverlayPanel: NSPanel {
         hidesOnDeactivate = false
         isReleasedWhenClosed = false
         collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary, .ignoresCycle]
+        // The overlay looks the same in light and dark (design/README.md), so its tokens
+        // always resolve to their light values.
+        appearance = NSAppearance(named: .aqua)
         setFrame(screen.frame, display: false)
     }
 
