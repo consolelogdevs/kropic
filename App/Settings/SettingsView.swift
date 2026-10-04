@@ -1,6 +1,7 @@
 import KeyboardShortcuts
 import SwiftUI
 
+/// Native grouped form in the spec's order: Capture, Translation, General, then a privacy note.
 struct SettingsView: View {
     @Bindable var settings: AppSettings
     let launchAtLogin: LaunchAtLogin
@@ -9,60 +10,80 @@ struct SettingsView: View {
     @State private var languages: [Locale.Language] = []
     @State private var launchError: String?
     @State private var confirmingClear = false
-    @State private var historyMessage: String?
+    @State private var historyCleared = false
+    @State private var historyError: String?
 
     var body: some View {
-        Form {
-            Section("General") {
-                KeyboardShortcuts.Recorder("Capture shortcut", name: .captureText)
-                Toggle("Launch at login", isOn: launchAtLoginBinding)
-                if launchAtLogin.requiresApproval {
+        VStack(alignment: .leading, spacing: 0) {
+            Form {
+                Section("Capture") {
+                    KeyboardShortcuts.Recorder("Capture shortcut", name: .captureText)
+                    Toggle(isOn: $settings.translateAutomatically) {
+                        SettingLabel(title: "Translate automatically", subtitle: "When source and target languages differ")
+                    }
+                    Toggle("Copy extracted text to the clipboard", isOn: $settings.copyTextAutomatically)
+                }
+
+                Section("Translation") {
+                    Picker("Default target language", selection: $settings.defaultTargetLanguage) {
+                        Text("Last Used").tag(String?.none)
+                        Divider()
+                        ForEach(languages, id: \.self) { language in
+                            Text(verbatim: LanguageCatalog.displayName(language)).tag(Optional(language.minimalIdentifier))
+                        }
+                    }
+                }
+
+                Section("General") {
+                    Picker("Appearance", selection: $settings.appearance) {
+                        Text("System").tag(AppearanceMode.system)
+                        Text("Light").tag(AppearanceMode.light)
+                        Text("Dark").tag(AppearanceMode.dark)
+                    }
+                    .pickerStyle(.segmented)
+
+                    Toggle("Launch at login", isOn: launchAtLoginBinding)
+                    if launchAtLogin.requiresApproval {
+                        HStack {
+                            Text("Allow Kropic in System Settings to finish turning this on.")
+                                .font(.kropicCaption)
+                                .foregroundStyle(Color.textSecondary)
+                            Spacer()
+                            Button("Open Login Items") { launchAtLogin.openLoginItemsSettings() }
+                        }
+                    }
+                    if let launchError {
+                        Text(verbatim: launchError).font(.kropicCaption).foregroundStyle(Color.danger)
+                    }
+
+                    Toggle(isOn: $settings.saveHistory) {
+                        SettingLabel(title: "Save history", subtitle: "Last 20 results, text only")
+                    }
                     HStack {
-                        Text("Allow Kropic in System Settings to finish turning this on.")
-                            .foregroundStyle(.secondary)
+                        if let historyError {
+                            Text(verbatim: historyError).font(.kropicCaption).foregroundStyle(Color.danger)
+                        }
                         Spacer()
-                        Button("Open Login Items") { launchAtLogin.openLoginItemsSettings() }
+                        Button(historyCleared ? "History Cleared" : "Clear History…") { confirmingClear = true }
+                            .buttonStyle(SecondaryButtonStyle(textColor: .danger))
+                            .disabled(historyCleared)
                     }
                 }
-                if let launchError {
-                    Text(launchError).foregroundStyle(.red)
-                }
             }
+            .formStyle(.grouped)
+            .scrollContentBackground(.hidden)
+            .scrollDisabled(true)
 
-            Section("Translation") {
-                Picker("Default target language", selection: $settings.defaultTargetLanguage) {
-                    Text("Last used").tag(String?.none)
-                    Divider()
-                    ForEach(languages, id: \.self) { language in
-                        Text(LanguageCatalog.displayName(language)).tag(Optional(language.minimalIdentifier))
-                    }
-                }
-                Toggle("Translate automatically", isOn: $settings.translateAutomatically)
-            }
-
-            Section("Text") {
-                Toggle("Copy extracted text automatically", isOn: $settings.copyTextAutomatically)
-            }
-
-            Section {
-                Toggle("Save history", isOn: $settings.saveHistory)
-                HStack {
-                    if let historyMessage {
-                        Text(historyMessage).foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                    Button("Clear History…", role: .destructive) { confirmingClear = true }
-                }
-            } header: {
-                Text("History")
-            } footer: {
-                Text("The last 20 results, text only. Captured images are never saved.")
-                    .foregroundStyle(.secondary)
-            }
+            Text("Captured images are never saved to disk. History keeps only the extracted text and the translation.")
+                .font(.kropicCaption)
+                .foregroundStyle(Color.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 20)
         }
-        .formStyle(.grouped)
-        .frame(width: 460)
+        .frame(width: 600)
         .fixedSize(horizontal: false, vertical: true)
+        .background(Color.settingsBackground)
         .confirmationDialog("Clear all history?", isPresented: $confirmingClear) {
             Button("Clear History", role: .destructive) { clearHistory() }
         } message: {
@@ -91,9 +112,12 @@ struct SettingsView: View {
         Task {
             do {
                 try await onClearHistory()
-                historyMessage = String(localized: "History cleared.")
+                historyError = nil
+                historyCleared = true
+                try? await Task.sleep(for: .seconds(2))
+                historyCleared = false
             } catch {
-                historyMessage = error.localizedDescription
+                historyError = error.localizedDescription
             }
         }
     }

@@ -42,7 +42,7 @@ Done when captures are pixel-accurate on a Retina display and on an external dis
 - [x] Settings window (see PRODUCT.md)
 - [x] History of the last 20 results, text only
 - [x] Launch at login with `SMAppService`
-- [ ] Appearance setting (System, Light, Dark) through AppearanceService (built in Phase 6, see there)
+- [x] Appearance setting (System, Light, Dark) through AppearanceService (built in Phase 6, see there)
 - [x] App icon and menu bar icon (placeholder app icon from `Scripts/make-placeholder-icon.swift`, SF Symbol in the menu bar; final icon to come)
 
 ## Phase 6 — Apply design
@@ -55,7 +55,7 @@ Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with ex
 - [x] Result panel features: swap languages, capture again, ⌘C and ⌘⇧C
 - [x] Selection overlay: dim, outline, handles, size label, cancel and confirm bar, hint pill on first uses
 - [x] Onboarding window with numbered steps and "Not Now"
-- [ ] Settings window: sections and order from the spec, subtitles, Appearance picker, footer note
+- [x] Settings window: sections and order from the spec, subtitles, Appearance picker, footer note
 - [ ] Menu bar: crop icon, Recent Translations submenu, About Kropic
 - [ ] History window restyled with the tokens (no design screen)
 - [ ] Placeholder app icon redrawn with the crop glyph

@@ -67,7 +67,7 @@ final class AppState {
             let settings = settings
             let launchAtLogin = launchAtLogin
             let history = history
-            settingsWindow = HostingWindowController(title: String(localized: "Kropic Settings")) {
+            settingsWindow = HostingWindowController(title: String(localized: "Settings")) {
                 SettingsView(settings: settings, launchAtLogin: launchAtLogin) {
                     try await history.clear()
                 }

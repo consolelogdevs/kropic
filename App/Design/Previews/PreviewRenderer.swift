@@ -26,6 +26,7 @@ enum PreviewRenderer {
             Entry(name: "LongText", view: AnyView(ResultPreviews.longText)),
             Entry(name: "Overlay", view: AnyView(OverlayPreview())),
             Entry(name: "Onboarding", view: AnyView(OnboardingPreview())),
+            Entry(name: "Settings", view: AnyView(SettingsPreview())),
         ]
     }
 

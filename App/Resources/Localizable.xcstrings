@@ -23,10 +23,16 @@
     "Allow Kropic to see your screen" : {
 
     },
+    "Appearance" : {
+
+    },
     "Apple Translation · on device" : {
 
     },
     "Cancel (Esc)" : {
+
+    },
+    "Capture" : {
 
     },
     "Capture (Return)" : {
@@ -45,6 +51,9 @@
 
     },
     "Captured area" : {
+
+    },
+    "Captured images are never saved to disk. History keeps only the extracted text and the translation." : {
 
     },
     "Clear History" : {
@@ -77,7 +86,10 @@
     "Copy Translation" : {
 
     },
-    "Copy extracted text automatically" : {
+    "Copy extracted text to the clipboard" : {
+
+    },
+    "Dark" : {
 
     },
     "Default target language" : {
@@ -137,10 +149,7 @@
     "General" : {
 
     },
-    "History" : {
-
-    },
-    "History cleared." : {
+    "History Cleared" : {
 
     },
     "History…" : {
@@ -155,9 +164,6 @@
     "Kropic History" : {
 
     },
-    "Kropic Settings" : {
-
-    },
     "Kropic could not restart itself. Please quit it from the menu bar and open it again." : {
 
     },
@@ -167,13 +173,19 @@
     "Kropic needs to see the screen to read the text in the area you select. Images are processed in memory only, never saved and never sent anywhere." : {
 
     },
-    "Last used" : {
+    "Last 20 results, text only" : {
+
+    },
+    "Last Used" : {
 
     },
     "Launch at login" : {
 
     },
     "Launch at login could not be changed. Please try again, or add Kropic in System Settings → General → Login Items." : {
+
+    },
+    "Light" : {
 
     },
     "No History" : {
@@ -212,6 +224,9 @@
     "Saving history is turned off in Settings." : {
 
     },
+    "Settings" : {
+
+    },
     "Settings…" : {
 
     },
@@ -227,13 +242,10 @@
     "Swap Languages" : {
 
     },
-    "Text" : {
+    "System" : {
 
     },
     "The display you selected on is no longer available. Please try again." : {
-
-    },
-    "The last 20 results, text only. Captured images are never saved." : {
 
     },
     "The selected area could not be captured. Please try again." : {
@@ -286,6 +298,9 @@
 
     },
     "Welcome to Kropic" : {
+
+    },
+    "When source and target languages differ" : {
 
     }
   },
