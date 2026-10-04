@@ -15,8 +15,8 @@ struct HistoryView: View {
                     "No History",
                     systemImage: "clock",
                     description: Text(settings.saveHistory
-                        ? "Results you capture will appear here."
-                        : "Saving history is turned off in Settings.")
+                        ? String(localized: "Results you capture will appear here.")
+                        : String(localized: "Saving history is turned off in Settings."))
                 )
             } else {
                 List(model.entries) { entry in

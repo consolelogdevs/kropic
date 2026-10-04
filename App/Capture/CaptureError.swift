@@ -8,11 +8,11 @@ enum CaptureError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .permissionDenied:
-            "Kropic is not allowed to record the screen. Turn it on in System Settings under Privacy & Security → Screen & System Audio Recording."
+            String(localized: "Kropic is not allowed to record the screen. Turn it on in System Settings under Privacy & Security → Screen & System Audio Recording.")
         case .displayNotFound:
-            "The display you selected on is no longer available. Please try again."
+            String(localized: "The display you selected on is no longer available. Please try again.")
         case .failed:
-            "The selected area could not be captured. Please try again."
+            String(localized: "The selected area could not be captured. Please try again.")
         }
     }
 }

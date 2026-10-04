@@ -91,7 +91,7 @@ struct SettingsView: View {
         Task {
             do {
                 try await onClearHistory()
-                historyMessage = "History cleared."
+                historyMessage = String(localized: "History cleared.")
             } catch {
                 historyMessage = error.localizedDescription
             }

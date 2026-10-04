@@ -1,0 +1,200 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%lld × %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld × %2$lld"
+          }
+        }
+      }
+    },
+    "After you turn it on, macOS usually needs Kropic to restart." : {
+
+    },
+    "Allow Kropic in System Settings to finish turning this on." : {
+
+    },
+    "Capture (Return)" : {
+
+    },
+    "Capture Text" : {
+
+    },
+    "Capture shortcut" : {
+
+    },
+    "Clear History" : {
+
+    },
+    "Clear History…" : {
+
+    },
+    "Clear all history?" : {
+
+    },
+    "Click an entry to copy its text." : {
+
+    },
+    "Copied" : {
+
+    },
+    "Copy" : {
+
+    },
+    "Copy Text" : {
+
+    },
+    "Copy Translation" : {
+
+    },
+    "Copy extracted text automatically" : {
+
+    },
+    "Default target language" : {
+
+    },
+    "Detect Language" : {
+
+    },
+    "Detected: %@" : {
+
+    },
+    "Download…" : {
+
+    },
+    "From" : {
+
+    },
+    "General" : {
+
+    },
+    "History" : {
+
+    },
+    "History cleared." : {
+
+    },
+    "History…" : {
+
+    },
+    "Kropic" : {
+
+    },
+    "Kropic History" : {
+
+    },
+    "Kropic Settings" : {
+
+    },
+    "Kropic could not restart itself. Please quit it from the menu bar and open it again." : {
+
+    },
+    "Kropic is not allowed to record the screen. Turn it on in System Settings under Privacy & Security → Screen & System Audio Recording." : {
+
+    },
+    "Kropic needs screen recording access" : {
+
+    },
+    "Kropic reads text from the part of the screen you select. macOS treats that as screen recording, so turn Kropic on in System Settings under Privacy & Security → Screen & System Audio Recording. Images never leave your Mac and are never saved." : {
+
+    },
+    "Last used" : {
+
+    },
+    "Launch at login" : {
+
+    },
+    "Launch at login could not be changed. Please try again, or add Kropic in System Settings → General → Login Items." : {
+
+    },
+    "No History" : {
+
+    },
+    "No text found in the selected area" : {
+
+    },
+    "Open Login Items" : {
+
+    },
+    "Open System Settings" : {
+
+    },
+    "Quit Kropic" : {
+
+    },
+    "Recognizing text…" : {
+
+    },
+    "Restart Kropic" : {
+
+    },
+    "Results you capture will appear here." : {
+
+    },
+    "Save history" : {
+
+    },
+    "Saving history is turned off in Settings." : {
+
+    },
+    "Settings…" : {
+
+    },
+    "Source and target are the same language." : {
+
+    },
+    "Text" : {
+
+    },
+    "The display you selected on is no longer available. Please try again." : {
+
+    },
+    "The last 20 results, text only. Captured images are never saved." : {
+
+    },
+    "The selected area could not be captured. Please try again." : {
+
+    },
+    "This removes all saved results. It can't be undone." : {
+
+    },
+    "To" : {
+
+    },
+    "Translate" : {
+
+    },
+    "Translate automatically" : {
+
+    },
+    "Translating from %@ to %@ isn't supported." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Translating from %1$@ to %2$@ isn't supported."
+          }
+        }
+      }
+    },
+    "Translating needs a language pack that isn't downloaded yet. The extracted text above is still available." : {
+
+    },
+    "Translation" : {
+
+    },
+    "Translation between these languages isn't supported." : {
+
+    },
+    "Try Again" : {
+
+    },
+    "Welcome to Kropic" : {
+
+    }
+  },
+  "version" : "1.0"
+}

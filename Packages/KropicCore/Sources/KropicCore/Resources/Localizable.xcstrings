@@ -1,0 +1,30 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "History could not be saved." : {
+
+    },
+    "Text could not be recognized in this image. Please try again." : {
+
+    },
+    "Text recognition was cancelled." : {
+
+    },
+    "The language of this text couldn't be identified. Pick the source language." : {
+
+    },
+    "The language pack for this translation isn't downloaded yet." : {
+
+    },
+    "The text couldn't be translated. Please try again." : {
+
+    },
+    "Translation between these languages isn't supported." : {
+
+    },
+    "Translation was cancelled." : {
+
+    }
+  },
+  "version" : "1.0"
+}

@@ -7,9 +7,9 @@ public enum OCRError: LocalizedError, Equatable {
     public var errorDescription: String? {
         switch self {
         case .cancelled:
-            "Text recognition was cancelled."
+            String(localized: "Text recognition was cancelled.", bundle: .module)
         case .failed:
-            "Text could not be recognized in this image. Please try again."
+            String(localized: "Text could not be recognized in this image. Please try again.", bundle: .module)
         }
     }
 }

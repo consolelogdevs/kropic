@@ -56,7 +56,7 @@ struct ResultView: View {
             }
 
         case .noText:
-            message("No text found in the selected area", systemImage: "text.magnifyingglass")
+            message(String(localized: "No text found in the selected area"), systemImage: "text.magnifyingglass")
 
         case .failed(let text):
             message(text, systemImage: "exclamationmark.triangle")

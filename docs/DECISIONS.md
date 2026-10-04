@@ -196,3 +196,8 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** The debug render harness (`Kropic -renderPreviews`) draws each preview in an off-screen `NSHostingView` and saves an sRGB PNG per appearance. Files land in the sandbox temporary folder and are copied to `design/renders/`
 - **Why** `ImageRenderer` replaces native controls (switches, segmented pickers, text fields) with placeholder boxes, so it cannot show what the screens really look like. The snapshot draws them. Known limitation: launched from a terminal the app cannot become active, so AppKit switches render in their inactive grey; SwiftUI buttons are forced active with `controlActiveState`
 - **Alternatives** `ImageRenderer` as CLAUDE.md first suggested, or screenshots of the running app, which need Screen Recording permission for the terminal
+
+### D-040 String Catalogs synced by a script
+- **Decision** `App/Resources/Localizable.xcstrings` for the app and a second catalog inside KropicCore (`defaultLocalization: "en"`, `bundle: .module`). `Scripts/sync-strings.sh` builds and runs `xcstringstool sync` on the compiler's `.stringsdata`, skipping debug-only preview views
+- **Why** Xcode fills catalogs on build only in the IDE; `xcodebuild` emits the strings but never writes them back. A Swift package needs its own catalog to localize its error messages
+- **Alternatives** Relying on opening the project in Xcode, or moving KropicCore's user facing messages into the app target

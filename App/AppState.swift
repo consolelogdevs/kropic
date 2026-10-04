@@ -26,7 +26,7 @@ final class AppState {
 
     init() {
         let permissions = permissions
-        onboarding = HostingWindowController(title: "Welcome to Kropic") {
+        onboarding = HostingWindowController(title: String(localized: "Welcome to Kropic")) {
             OnboardingView(permissions: permissions)
         }
     }
@@ -58,7 +58,7 @@ final class AppState {
             let settings = settings
             let launchAtLogin = launchAtLogin
             let history = history
-            settingsWindow = HostingWindowController(title: "Kropic Settings") {
+            settingsWindow = HostingWindowController(title: String(localized: "Kropic Settings")) {
                 SettingsView(settings: settings, launchAtLogin: launchAtLogin) {
                     try await history.clear()
                 }
@@ -71,7 +71,7 @@ final class AppState {
         if historyWindow == nil {
             let history = history
             let settings = settings
-            historyWindow = HostingWindowController(title: "Kropic History", resizable: true) {
+            historyWindow = HostingWindowController(title: String(localized: "Kropic History"), resizable: true) {
                 HistoryView(model: history, settings: settings)
             }
         }

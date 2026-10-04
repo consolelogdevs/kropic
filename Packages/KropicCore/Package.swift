@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "KropicCore",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v15),
         .iOS(.v18),
@@ -11,7 +12,7 @@ let package = Package(
         .library(name: "KropicCore", targets: ["KropicCore"]),
     ],
     targets: [
-        .target(name: "KropicCore"),
+        .target(name: "KropicCore", resources: [.process("Resources")]),
         .testTarget(name: "KropicCoreTests", dependencies: ["KropicCore"]),
     ]
 )

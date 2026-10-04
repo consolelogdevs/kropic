@@ -35,8 +35,8 @@ struct TranslationView: View {
     }
 
     private var automaticLabel: String {
-        guard let detected = model.detectedLanguage else { return "Detect Language" }
-        return "Detected: \(LanguageCatalog.displayName(detected))"
+        guard let detected = model.detectedLanguage else { return String(localized: "Detect Language") }
+        return String(localized: "Detected: \(LanguageCatalog.displayName(detected))")
     }
 
     @ViewBuilder
@@ -67,13 +67,13 @@ struct TranslationView: View {
             }
 
         case .sameLanguage:
-            note("Source and target are the same language.")
+            note(String(localized: "Source and target are the same language."))
 
         case .unsupported:
             note(unsupportedMessage)
 
         case .needsDownload:
-            note("Translating needs a language pack that isn't downloaded yet. The extracted text above is still available.") {
+            note(String(localized: "Translating needs a language pack that isn't downloaded yet. The extracted text above is still available.")) {
                 Button("Download…", action: model.translateNow)
             }
 
@@ -86,9 +86,9 @@ struct TranslationView: View {
 
     private var unsupportedMessage: String {
         guard let source = model.source, let target = model.target else {
-            return "Translation between these languages isn't supported."
+            return String(localized: "Translation between these languages isn't supported.")
         }
-        return "Translating from \(LanguageCatalog.displayName(source)) to \(LanguageCatalog.displayName(target)) isn't supported."
+        return String(localized: "Translating from \(LanguageCatalog.displayName(source)) to \(LanguageCatalog.displayName(target)) isn't supported.")
     }
 
     private func note(_ text: String, @ViewBuilder action: () -> some View = { EmptyView() }) -> some View {

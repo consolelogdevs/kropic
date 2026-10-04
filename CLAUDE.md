@@ -24,6 +24,7 @@ Detailed context lives in the files below. They are loaded automatically. Treat 
 | Generate project | `xcodegen generate` |
 | Build app | `xcodebuild -project Kropic.xcodeproj -scheme Kropic -configuration Debug build` |
 | Test core package | `swift test --package-path Packages/KropicCore` |
+| Sync String Catalogs after changing UI text | `Scripts/sync-strings.sh` |
 | Regenerate placeholder app icon | `swift Scripts/make-placeholder-icon.swift` |
 | Check core builds for iOS | `cd Packages/KropicCore && xcodebuild -scheme KropicCore -destination 'generic/platform=iOS' build` |
 

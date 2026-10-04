@@ -18,7 +18,7 @@ Kropic/
 │   ├── Permissions/             Screen Recording check, onboarding view
 │   ├── Windows/                 HostingWindowController (onboarding, settings, history)
 │   ├── History/                 history window and view model
-│   ├── Resources/               Assets.xcassets (app icon, AccentColor, color tokens)
+│   ├── Resources/               Assets.xcassets (app icon, AccentColor, color tokens), Localizable.xcstrings
 │   ├── Design/                  Theme (semantic tokens), Typography, Metrics; Previews/ (debug render harness)
 │   ├── Capture/                 selection overlay windows and views, CaptureService
 │   ├── ResultPanel/             floating NSPanel, SwiftUI result view, view model
@@ -34,6 +34,8 @@ Kropic/
 │   └── Tests/KropicCoreTests/    OCR tests render known text into in-memory images
 └── docs/
 ```
+
+User facing text: SwiftUI literals are localizable automatically; every other user facing `String` (errors, window titles, composed messages) uses `String(localized:)`, with `bundle: .module` inside KropicCore, which has its own catalog in `Sources/KropicCore/Resources`. `Scripts/sync-strings.sh` merges the compiler's extracted strings into both catalogs.
 
 KropicCore must compile for both macOS and iOS so a future iPhone app can reuse it. It only imports Foundation, CoreGraphics, Vision and NaturalLanguage.
 

@@ -5,7 +5,7 @@ enum LaunchAtLoginError: LocalizedError {
     case changeFailed
 
     var errorDescription: String? {
-        "Launch at login could not be changed. Please try again, or add Kropic in System Settings → General → Login Items."
+        String(localized: "Launch at login could not be changed. Please try again, or add Kropic in System Settings → General → Login Items.")
     }
 }
 

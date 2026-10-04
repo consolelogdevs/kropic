@@ -43,15 +43,15 @@ public enum TranslationFailure: LocalizedError, Equatable {
     public var errorDescription: String? {
         switch self {
         case .cancelled:
-            "Translation was cancelled."
+            String(localized: "Translation was cancelled.", bundle: .module)
         case .unsupportedPair:
-            "Translation between these languages isn't supported."
+            String(localized: "Translation between these languages isn't supported.", bundle: .module)
         case .languagePackMissing:
-            "The language pack for this translation isn't downloaded yet."
+            String(localized: "The language pack for this translation isn't downloaded yet.", bundle: .module)
         case .unidentifiedLanguage:
-            "The language of this text couldn't be identified. Pick the source language."
+            String(localized: "The language of this text couldn't be identified. Pick the source language.", bundle: .module)
         case .failed:
-            "The text couldn't be translated. Please try again."
+            String(localized: "The text couldn't be translated. Please try again.", bundle: .module)
         }
     }
 }
