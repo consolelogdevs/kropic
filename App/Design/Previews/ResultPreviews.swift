@@ -14,6 +14,15 @@ enum ResultPreviews {
         return view(model)
     }
 
+    /// A tall capture with several paragraphs, to check that the panel caps its height.
+    static var longText: some View {
+        let text = Array(repeating: english, count: 12).joined(separator: "\n\n")
+        let model = makeModel(sampleText: text, size: CGSize(width: 520, height: 900))
+        model.setPreview(state: .recognized, text: text)
+        model.translation.setPreview(languages: languages, detected: language("en"), target: language("tr"), state: .translated(Array(repeating: turkish, count: 12).joined(separator: "\n\n")))
+        return view(model)
+    }
+
     static var loading: some View {
         let model = makeModel(sampleText: english, size: CGSize(width: 412, height: 96))
         model.translation.setPreview(languages: languages, detected: nil, target: language("tr"), state: .idle)

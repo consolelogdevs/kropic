@@ -203,9 +203,9 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Alternatives** Relying on opening the project in Xcode, or moving KropicCore's user facing messages into the app target
 
 ### D-041 Frameless result panel that grows downward
-- **Decision** The result panel is a borderless `NSPanel` whose SwiftUI content draws the rounded window, header and footer. An `NSHostingView` sizes the window to the content; once placed, `ResultPanel` keeps the top edge fixed when the height changes and keeps the panel on screen. Text areas grow up to 200 pt and then scroll
+- **Decision** The result panel is a borderless `NSPanel` whose SwiftUI content draws the rounded window, header and footer. The SwiftUI view reports its height and `ResultPanel.setHeightKeepingTop` resizes the window with the top edge fixed, never taller than the screen and moved up only as far as needed. The hosting view's automatic window sizing is off (`sizingOptions = []`). Text areas grow up to 200 pt and then scroll
 - **Why** The design has its own 44 pt header instead of a title bar and a 12 pt corner radius. Growing downward keeps the panel next to the selection it belongs to
-- **Alternatives** A titled panel with a hidden, transparent title bar, whose corner radius and traffic lights follow the system instead of the spec
+- **Alternatives** A titled panel with a hidden, transparent title bar, whose corner radius and traffic lights follow the system instead of the spec. Letting `NSHostingView` size the window was tried first: AppKit kept the bottom edge, so long text pushed the header off the top of the screen (found in manual testing)
 
 ### D-042 Full-width language pickers only on macOS 26
 - **Decision** The language pop-ups use `.buttonSizing(.flexible)` on macOS 26 so they fill their half of the row like the spec. On macOS 15 they keep the native intrinsic width

@@ -7,6 +7,8 @@ struct ResultView: View {
     @Bindable var model: ResultViewModel
     let onCaptureAgain: () -> Void
     let onClose: () -> Void
+    /// Reports the content's height so the panel can resize itself.
+    var onHeightChange: (CGFloat) -> Void = { _ in }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,6 +32,9 @@ struct ResultView: View {
         .background(Color.panelBackground)
         .clipShape(RoundedRectangle(cornerRadius: Metrics.ResultPanel.cornerRadius))
         .overlay(RoundedRectangle(cornerRadius: Metrics.ResultPanel.cornerRadius).strokeBorder(Color.panelSeparator))
+        .fixedSize(horizontal: false, vertical: true)
+        .onGeometryChange(for: CGFloat.self, of: { $0.size.height }, action: onHeightChange)
+        .frame(maxHeight: .infinity, alignment: .top)
         .modifier(TranslationHost(provider: model.translationProvider))
         .task {
             await model.translation.loadLanguages()

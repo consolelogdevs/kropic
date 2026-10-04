@@ -7,10 +7,6 @@ final class ResultPanel: NSPanel {
     var onCopyText: (() -> Void)?
     var onCopyTranslation: (() -> Void)?
 
-    /// Once placed, height changes keep the top edge where it is, so the panel grows
-    /// downward for long text, and the panel stays on its screen.
-    var anchorsTop = false
-
     init() {
         super.init(
             contentRect: .zero,
@@ -35,15 +31,19 @@ final class ResultPanel: NSPanel {
         onClose = nil
     }
 
-    override func setFrame(_ frameRect: NSRect, display flag: Bool) {
-        var rect = frameRect
-        if anchorsTop, rect.height != frame.height {
-            rect.origin.y = frame.maxY - rect.height
-            if let visible = screen?.visibleFrame, rect.minY < visible.minY {
-                rect.origin.y = min(visible.minY, visible.maxY - rect.height)
-            }
+    /// Changes the height while keeping the top edge where it is, so the panel grows downward
+    /// for long text. It never gets taller than the screen and is moved up only as far as
+    /// needed to stay on it.
+    func setHeightKeepingTop(_ height: CGFloat) {
+        guard height != frame.height else { return }
+        let visible = screen?.visibleFrame ?? frame
+        var rect = frame
+        rect.size.height = min(height, visible.height)
+        rect.origin.y = frame.maxY - rect.height
+        if rect.minY < visible.minY {
+            rect.origin.y = visible.minY
         }
-        super.setFrame(rect, display: flag)
+        setFrame(rect, display: true)
         // The shadow follows the rounded content, so it has to be recomputed after a resize.
         invalidateShadow()
     }

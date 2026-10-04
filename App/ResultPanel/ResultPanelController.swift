@@ -21,9 +21,13 @@ final class ResultPanelController {
 
         let view = ResultView(model: model, onCaptureAgain: onRetry) { [weak panel] in
             panel?.close()
+        } onHeightChange: { [weak panel] height in
+            panel?.setHeightKeepingTop(height)
         }
-        // The hosting view sizes the window to the SwiftUI content, so the panel grows with long text.
+        // The view reports its height and the panel resizes itself (top edge fixed), so AppKit
+        // must not resize the window on its own: it would keep the bottom edge and grow upward.
         let hostingView = NSHostingView(rootView: view)
+        hostingView.sizingOptions = []
         panel.contentView = hostingView
 
         let size = hostingView.fittingSize
@@ -31,7 +35,6 @@ final class ResultPanelController {
         let local = Placement.panelFrame(size: size, beside: selection.rect, in: visible, gap: Self.gap)
         let global = ScreenGeometry.globalRect(fromDisplayLocal: local, displayFrame: selection.displayFrame)
         panel.setFrame(global, display: true)
-        panel.anchorsTop = true
 
         panel.makeKeyAndOrderFront(nil)
         self.panel = panel
