@@ -39,13 +39,30 @@ Done when captures are pixel-accurate on a Retina display and on an external dis
 - [x] Language pack download prompt and unsupported pair message
 
 ## Phase 5 — Polish
-- [ ] Settings window (see PRODUCT.md)
-- [ ] History of the last 20 results, text only
-- [ ] Launch at login with `SMAppService`
-- [ ] Appearance setting (System, Light, Dark) through AppearanceService
-- [ ] App icon and menu bar icon
+- [x] Settings window (see PRODUCT.md)
+- [x] History of the last 20 results, text only
+- [x] Launch at login with `SMAppService`
+- [ ] Appearance setting (System, Light, Dark) through AppearanceService (built in Phase 6, see there)
+- [x] App icon and menu bar icon (placeholder app icon from `Scripts/make-placeholder-icon.swift`, SF Symbol in the menu bar; final icon to come)
 
-## Phase 6 — Annotate and share (after v1, not yet planned in detail)
+## Phase 6 — Apply design
+Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with exact values).
+- [x] Color tokens in the asset catalog (Any and Dark), fixed accent, type and spacing constants, AppearanceService, preview render harness
+- [ ] String Catalog with all user facing strings in English
+- [ ] Shared components (section label, chip, text button, primary and secondary buttons, field, status card, footer)
+- [ ] Result panel shell: custom header and footer, 760 pt wide layout, image column with caption, grows for long text
+- [ ] Result panel states: main, loading with placeholder bars, no text, language pack notice (notice first, then Apple's prompt)
+- [ ] Result panel features: swap languages, capture again, ⌘C and ⌘⇧C
+- [ ] Selection overlay: dim, outline, handles, size label, cancel and confirm bar, hint pill on first uses
+- [ ] Onboarding window with numbered steps and "Not Now"
+- [ ] Settings window: sections and order from the spec, subtitles, Appearance picker, footer note
+- [ ] Menu bar: crop icon, Recent Translations submenu, About Kropic
+- [ ] History window restyled with the tokens (no design screen)
+- [ ] Placeholder app icon redrawn with the crop glyph
+
+Done when every screen matches its design in light and dark mode.
+
+## Phase 7 — Annotate and share (after v1, not yet planned in detail)
 - [ ] Toolbar on the selection before confirming: arrow, rectangle, text, highlight, undo
 - [ ] Annotations are drawn onto the captured image in memory
 - [ ] Copy the annotated image to the clipboard and share it through the macOS share menu

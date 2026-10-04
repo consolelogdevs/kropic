@@ -5,6 +5,9 @@ Configs/Local.xcconfig
 *.xcodeproj
 *.xcworkspace
 
+# Preview renders, regenerated with Kropic -renderPreviews
+design/renders/
+
 # Build output
 build/
 DerivedData/

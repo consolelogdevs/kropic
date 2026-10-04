@@ -11,20 +11,27 @@ Kropic/
 │   └── Local.xcconfig           DEVELOPMENT_TEAM etc, gitignored
 ├── App/                         macOS app target
 │   ├── KropicApp.swift           entry point, MenuBarExtra
+│   ├── AppDelegate.swift         owns AppState, starts it after launch
 │   ├── AppState.swift           top-level @Observable state and coordination
 │   ├── MenuBar/
 │   ├── Hotkey/
-│   ├── Permissions/             Screen Recording check, onboarding window
+│   ├── Permissions/             Screen Recording check, onboarding view
+│   ├── Windows/                 HostingWindowController (onboarding, settings, history)
+│   ├── History/                 history window and view model
+│   ├── Resources/               Assets.xcassets (app icon, AccentColor, color tokens)
+│   ├── Design/                  Theme (semantic tokens), Typography, Metrics; Previews/ (debug render harness)
 │   ├── Capture/                 selection overlay windows and views, CaptureService
 │   ├── ResultPanel/             floating NSPanel, SwiftUI result view, view model
 │   ├── Translation/             AppleTranslationProvider (needs SwiftUI, see below)
-│   └── Settings/
+│   └── Settings/                AppSettings (UserDefaults), SettingsView, LaunchAtLogin
 ├── Packages/KropicCore/          local Swift package, no AppKit or UIKit imports
 │   ├── Sources/KropicCore/
+│   │   ├── Geometry/            coordinate conversion, selection math, placement
 │   │   ├── OCR/                 TextRecognizer
+│   │   ├── History/             HistoryEntry, HistoryStore (JSON file, newest 20)
 │   │   ├── Language/            LanguageDetector
 │   │   └── Translation/         Translating protocol, shared types
-│   └── Tests/KropicCoreTests/    includes fixture images with known text
+│   └── Tests/KropicCoreTests/    OCR tests render known text into in-memory images
 └── docs/
 ```
 
@@ -34,38 +41,43 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 
 **AppState** owns the flow. Idle → selecting → capturing → showing result. It is `@MainActor` and talks to the services below.
 
-**HotkeyService** wraps KeyboardShortcuts and calls AppState when the shortcut fires.
+**HotkeyService** wraps KeyboardShortcuts and calls AppState when the shortcut fires. It listens with the `KeyboardShortcuts.events(.keyUp, for:)` async stream, because `onKeyUp` is slated for deprecation.
 
-**PermissionService** uses `CGPreflightScreenCaptureAccess()` and `CGRequestScreenCaptureAccess()`. The System Settings deep link is `x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture`.
+**PermissionService** uses `CGPreflightScreenCaptureAccess()` and `CGRequestScreenCaptureAccess()`. The System Settings deep link is `x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture` (older form, to be confirmed on macOS 15+; the newer form is `com.apple.settings.PrivacySecurity.extension?Privacy_ScreenCapture`). The onboarding window is AppKit-hosted (`HostingWindowController`) so it can be opened from the hotkey path.
 
-**AppearanceService** stores the user's choice (system, light, dark) in UserDefaults and sets `NSApp.appearance` to nil, `.aqua` or `.darkAqua`. SwiftUI views and AppKit windows follow automatically. All colors come from the asset catalog with Any and Dark variants, so views never branch on the theme themselves.
+**AppearanceService** applies the user's choice (system, light, dark) by setting `NSApp.appearance` to nil, `.aqua` or `.darkAqua`. The choice itself is stored by `AppSettings` (the single owner of UserDefaults keys), which calls the service whenever it changes and once at launch. SwiftUI views and AppKit windows follow automatically. All colors come from the asset catalog with Any and Dark variants, so views never branch on the theme themselves.
 
 **SelectionOverlay**
-- One borderless, transparent `NSPanel` per display, covering the full frame, at a window level above normal windows and the menu bar
+- One borderless, transparent `NSPanel` per display, covering the full frame, at `.screenSaver` level (above the menu bar and Dock). Every display dims; the selection belongs to the display where the drag starts
+- A shared `SelectionModel` (`@Observable`) holds the selection for all displays
 - Hosts a SwiftUI view that draws the dim layer, the selection rectangle, resize handles and the checkmark button
-- Must become key so it receives Esc and Enter
-- Returns the selected rectangle in global screen coordinates plus the display it belongs to
+- Kropic activates itself while the overlay is open (`FocusRestorer`) so the panels receive mouse and key events, and hands focus back to the previous app on cancel or when the result panel closes. Hosting views accept the first click so a drag on a non-key display works. Keys are intercepted in the panel's `sendEvent`
+- `SelectionOverlayController.select()` returns the selected rectangle in display-local points plus the display ID and frames, or `nil` on cancel
 
 **CaptureService**
-- Uses ScreenCaptureKit (`SCShareableContent`, `SCContentFilter`, `SCScreenshotManager`)
+- Uses ScreenCaptureKit: `SCShareableContent` → `SCContentFilter(display:excludingApplications:exceptingWindows:)` → `SCScreenshotManager.captureImage(contentFilter:configuration:)` (macOS 14+). Not `captureImage(in:)`, which needs macOS 15.2 and cannot exclude windows
 - Exclude Kropic's own windows from the capture so the overlay never appears in the image
-- Coordinate pitfalls. AppKit uses a bottom-left origin and points. ScreenCaptureKit and CGImage use a top-left origin and pixels. Convert per display using its frame and backing scale factor. Write unit-testable helpers for this conversion
+- Coordinate pitfalls. AppKit uses a bottom-left origin in global points. `SCStreamConfiguration.sourceRect` is in display-local **points** with a top-left origin; only the output `width`/`height` are pixels (points × `SCContentFilter.pointPixelScale`). SwiftUI views covering a display already use display-local top-left points, so the selection needs no conversion for capture. Helpers live in `KropicCore/Geometry/ScreenGeometry` with unit tests
 - Returns a `CGImage` held in memory only
 
 **TextRecognizer** (KropicCore)
-- Prefer the Swift Vision API on macOS 15 (`RecognizeTextRequest`) over the older `VNRecognizeTextRequest` if it covers our needs
-- Accurate recognition level, language correction on, automatic language detection on
-- Sort observations top to bottom then left to right and rebuild line breaks so paragraphs survive
-- Returns text plus per-line confidence
+- Uses the Swift Vision API (`RecognizeTextRequest`, macOS 15). Accurate recognition level, language correction on, automatic language detection on. No explicit language list: Turkish diacritics survive with automatic detection (see tests)
+- `TextLayout` rebuilds the text: pieces at the same height form a row (joined left to right), rows go top to bottom, a gap larger than 0.8 × the median line height becomes a blank line. Vision's own paragraph info (`shouldWrapToNextLine`, `RecognizeDocumentsRequest`) is macOS 26 only
+- Known limitation: side-by-side columns are interleaved row by row
+- Returns `RecognizedText`: the rebuilt text plus each line with its confidence and normalized position
 
-**LanguageDetector** (KropicCore) uses `NLLanguageRecognizer` and returns the dominant language. Short or mixed text can be detected wrongly, so the UI always allows an override.
+**LanguageDetector** (KropicCore) uses `NLLanguageRecognizer` and returns the dominant language, or `nil` for text with fewer than 3 letters or confidence below 0.5. Short or mixed text can be detected wrongly, so the UI always allows an override. When our detection gives `nil`, the source is left empty and Apple's framework identifies the language itself.
 
 **Translation**
-- KropicCore defines a `Translating` protocol and the shared types (language, request, result). Cloud providers can implement it later
-- `AppleTranslationProvider` lives in the app target. On macOS 15 a `TranslationSession` is only obtained through the SwiftUI `.translationTask` modifier, so the provider is driven by a view in the result panel. If the SDK on this machine allows creating a session directly, use that behind the same protocol and record it in DECISIONS.md
-- Check `LanguageAvailability` before translating to tell apart installed, downloadable and unsupported pairs
+- KropicCore defines a `@MainActor` `Translating` protocol and the shared types (request, result, availability, `TranslationFailure`). Cloud providers can implement it later
+- `AppleTranslationProvider` lives in the app target. On macOS 15 a `TranslationSession` is only obtained through the SwiftUI `.translationTask` modifier. `translate()` queues the request and changes the session configuration (or calls `invalidate()` for the same pair); `TranslationHost`, attached to the result view, runs the task, translates and hands the outcome back, which resumes the caller. `TranslationSession(installedSource:target:)` exists but needs macOS 26 and installed packs, so it is not used (D-023)
+- `TranslationSession` and `LanguageAvailability` are not `Sendable`. They are only used inside `nonisolated` code and never cross to the main actor
+- Check `LanguageAvailability` before translating to tell apart installed, downloadable and unsupported pairs. Translating a downloadable pair makes the system show its download prompt on the result panel. Declining it has no dedicated error, so a failure on a still-downloadable pair is reported as a missing language pack
+- `TranslationViewModel` owns the pickers and states. Edits re-translate after a 0.6 s debounce; picker changes translate immediately. `LanguageCatalog` maps detected or system languages to Apple's list (e.g. `en-TR` → `en`) and remembers the last target in `UserDefaults`
 
-**ResultPanel** is a floating `NSPanel` positioned next to the selection and clamped to the visible frame of that display. Content is SwiftUI. The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
+**Settings and History** are AppKit-hosted windows (`HostingWindowController`), not SwiftUI scenes, so they come to the front in a menu bar only app. `AppSettings` is the single owner of UserDefaults keys. `LaunchAtLogin` wraps `SMAppService.mainApp`; its state lives in the system. `HistoryStore` (KropicCore actor) keeps the newest 20 entries in `History.json` in Application Support (the sandbox container). `AppState` saves the open result when its panel closes or is replaced.
+
+**ResultPanel** is a floating `NSPanel` positioned next to the selection (right, left, below, above) and clamped to the visible frame of that display (`Placement.panelFrame`). Content is SwiftUI. The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
 
 ## Concurrency
 
@@ -75,5 +87,5 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 
 ## Testing
 
-- KropicCore has unit tests. OCR runs against fixture images with known Turkish and English text. Language detection and coordinate conversion have plain unit tests
+- KropicCore has unit tests. OCR runs against images rendered in memory with Core Text from known Turkish and English text (no fixture files). Language detection and coordinate conversion have plain unit tests
 - UI, permissions and overlay behavior are tested by hand using the checklist at the end of each phase

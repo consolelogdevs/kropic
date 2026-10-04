@@ -1,6 +1,6 @@
 # Kropic
 
-Native macOS menu bar app. The user selects a region of the screen, the app extracts the text with OCR and translates it.
+Native macOS menu bar app. The user selects a region of the screen, the app extracts the text with OCR and translates it. The app name is Kropic.
 
 Detailed context lives in the files below. They are loaded automatically. Treat them as the source of truth and keep them up to date.
 
@@ -24,6 +24,8 @@ Detailed context lives in the files below. They are loaded automatically. Treat 
 | Generate project | `xcodegen generate` |
 | Build app | `xcodebuild -project Kropic.xcodeproj -scheme Kropic -configuration Debug build` |
 | Test core package | `swift test --package-path Packages/KropicCore` |
+| Regenerate placeholder app icon | `swift Scripts/make-placeholder-icon.swift` |
+| Check core builds for iOS | `cd Packages/KropicCore && xcodebuild -scheme KropicCore -destination 'generic/platform=iOS' build` |
 
 Run `xcodegen generate` after any change to `project.yml` or after adding or removing files.
 
@@ -54,7 +56,7 @@ I am an experienced web developer (React, TypeScript, Vue) and new to Swift. Whe
 - Build with native SwiftUI controls and system materials. Match spacing, sizes, colors and states from the spec
 - Colors live in the asset catalog with Any and Dark appearance variants. Never hardcode hex values in views
 - The app supports System, Light and Dark appearance (see PRODUCT.md). Every screen must look right in both
-- When a view is done, render its preview to PNG with ImageRenderer in both appearances, save the files to `design/renders/` and compare them with the spec
+- When a view is done, render its preview in both appearances with the debug render harness (`Kropic -renderPreviews`, see D-039; `ImageRenderer` cannot draw native controls), copy the PNGs to `design/renders/` and compare them with the spec
 
 ## Never
 
