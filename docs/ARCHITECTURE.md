@@ -20,6 +20,7 @@ Kropic/
 │   ├── History/                 history window and view model
 │   ├── Resources/               Assets.xcassets (AppIcon and MenuBarIcon from design/icon/, AccentColor, color tokens), Localizable.xcstrings
 │   ├── Design/                  Theme (semantic tokens), Typography, Metrics; Components/ (shared views and button styles); Previews/ (debug render harness)
+│   ├── Annotation/              annotation editor window, toolbar, canvas, view model
 │   ├── Capture/                 selection overlay windows and views, CaptureService
 │   ├── ResultPanel/             floating NSPanel, SwiftUI result view, view model
 │   ├── Translation/             AppleTranslationProvider (needs SwiftUI, see below)
@@ -29,6 +30,7 @@ Kropic/
 │   │   ├── Geometry/            coordinate conversion, selection math, placement
 │   │   ├── OCR/                 TextRecognizer
 │   │   ├── History/             HistoryEntry, HistoryStore (JSON file, newest 20)
+│   │   ├── Annotation/          Annotation, AnnotationDocument (undo/redo), AnnotationRenderer
 │   │   ├── Language/            LanguageDetector
 │   │   └── Translation/         Translating protocol, shared types
 │   └── Tests/KropicCoreTests/    OCR tests render known text into in-memory images
@@ -37,7 +39,7 @@ Kropic/
 
 User facing text: SwiftUI literals are localizable automatically; every other user facing `String` (errors, window titles, composed messages) uses `String(localized:)`, with `bundle: .module` inside KropicCore, which has its own catalog in `Sources/KropicCore/Resources`. `Scripts/sync-strings.sh` merges the compiler's extracted strings into both catalogs.
 
-KropicCore must compile for both macOS and iOS so a future iPhone app can reuse it. It only imports Foundation, CoreGraphics, Vision and NaturalLanguage.
+KropicCore must compile for both macOS and iOS so a future iPhone app can reuse it. It only imports Foundation, CoreGraphics, CoreText (annotation text), Vision and NaturalLanguage.
 
 ## Components
 
@@ -78,6 +80,8 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 - `TranslationViewModel` owns the pickers and states. Edits re-translate after a 0.6 s debounce; picker changes translate immediately. `LanguageCatalog` maps detected or system languages to Apple's list (e.g. `en-TR` → `en`) and remembers the last target in `UserDefaults`
 
 **Settings and History** are AppKit-hosted windows (`HostingWindowController`), not SwiftUI scenes, so they come to the front in a menu bar only app. `AppSettings` is the single owner of UserDefaults keys. `LaunchAtLogin` wraps `SMAppService.mainApp`; its state lives in the system. `HistoryStore` (KropicCore actor) keeps the newest 20 entries in `History.json` in Application Support (the sandbox container). `AppState` saves the open result when its panel closes or is replaced.
+
+**Annotation** is an editor window opened from the result panel header (floating level, so it is not hidden behind the panel). `AnnotationEditorViewModel` holds the captured image, an `AnnotationDocument` and the current tool and color. Drags on the canvas are converted from view points to image pixels; the shape being dragged is previewed with SwiftUI shapes, and on release it is added to the document and `AnnotationRenderer` (KropicCore) redraws the composite. The same renderer produces the image for Copy Image and Share, so what you see is what you share. Blur and pixelate shrink the area to a few samples and scale it back up (smooth for blur, nearest neighbour for pixelate), using Core Graphics only.
 
 **ResultPanel** is a floating, frameless `NSPanel` positioned next to the selection (right, left, below, above) and clamped to the visible frame of that display (`Placement.panelFrame`). Content is SwiftUI in an `NSHostingView` with `sizingOptions = []`: 760 pt wide, at least 440 pt high, taller for long text. The view reports its height (`onGeometryChange`) and `ResultPanel.setHeightKeepingTop` resizes the window itself, keeping the top edge and staying on screen. AppKit's automatic window sizing is not used because it keeps the bottom edge, which pushed the header off the top of the screen. SwiftUI draws the rounded window (radius 12), the draggable header (`WindowDragGesture`) and the footer. The panel handles Esc, ⌘C (all text unless a field has a selection) and ⌘⇧C (translation). A downloadable language pair shows a notice first; only "Download" triggers Apple's prompt (D-037). The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
 

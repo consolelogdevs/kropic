@@ -8,7 +8,13 @@ final class ResultPanelController {
     private var panel: ResultPanel?
     private var model: ResultViewModel?
 
-    func show(_ model: ResultViewModel, near selection: SelectionResult, onRetry: @escaping () -> Void, onClose: @escaping () -> Void) {
+    func show(
+        _ model: ResultViewModel,
+        near selection: SelectionResult,
+        onRetry: @escaping () -> Void,
+        onAnnotate: @escaping () -> Void,
+        onClose: @escaping () -> Void
+    ) {
         close()
 
         let panel = ResultPanel()
@@ -19,11 +25,12 @@ final class ResultPanelController {
         panel.onCopyText = { [weak model] in model?.copyText() }
         panel.onCopyTranslation = { [weak model] in model?.copyTranslation() }
 
-        let view = ResultView(model: model, onCaptureAgain: onRetry) { [weak panel] in
+        var view = ResultView(model: model, onCaptureAgain: onRetry) { [weak panel] in
             panel?.close()
         } onHeightChange: { [weak panel] height in
             panel?.setHeightKeepingTop(height)
         }
+        view.onAnnotate = onAnnotate
         // The view reports its height and the panel resizes itself (top edge fixed), so AppKit
         // must not resize the window on its own: it would keep the bottom edge and grow upward.
         let hostingView = NSHostingView(rootView: view)

@@ -64,7 +64,7 @@ enum ResultPreviews {
     }
 
     /// A stand-in for a captured image: text on white like the spec's sample, or a grey photo.
-    private static func sampleImage(text: String?, size: CGSize) -> CGImage? {
+    static func sampleImage(text: String?, size: CGSize) -> CGImage? {
         let scale: CGFloat = 2
         let rep = NSBitmapImageRep(
             bitmapDataPlanes: nil, pixelsWide: Int(size.width * scale), pixelsHigh: Int(size.height * scale),

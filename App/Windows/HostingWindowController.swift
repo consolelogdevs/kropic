@@ -15,13 +15,21 @@ final class HostingWindowController<Content: View> {
     private let title: String
     private let titleBar: TitleBar
     private let resizable: Bool
+    private let level: NSWindow.Level
     private let makeContent: () -> Content
     private var window: NSWindow?
 
-    init(title: String, titleBar: TitleBar = .standard, resizable: Bool = false, content: @escaping () -> Content) {
+    init(
+        title: String,
+        titleBar: TitleBar = .standard,
+        resizable: Bool = false,
+        level: NSWindow.Level = .normal,
+        content: @escaping () -> Content
+    ) {
         self.title = title
         self.titleBar = titleBar
         self.resizable = resizable
+        self.level = level
         self.makeContent = content
     }
 
@@ -51,6 +59,7 @@ final class HostingWindowController<Content: View> {
             window.titleVisibility = .hidden
         }
         window.styleMask = style
+        window.level = level
         window.isReleasedWhenClosed = false
         window.center()
         return window

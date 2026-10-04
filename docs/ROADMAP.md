@@ -63,9 +63,9 @@ Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with ex
 
 Done when every screen matches its design in light and dark mode.
 
-## Phase 7 — Annotate and share (after v1, not yet planned in detail)
-- [ ] Toolbar on the selection before confirming: arrow, rectangle, text, highlight, undo
-- [ ] Annotations are drawn onto the captured image in memory
-- [ ] Copy the annotated image to the clipboard and share it through the macOS share menu
+## Phase 7 — Annotate and share
+- [x] Annotation model, undo/redo and renderer in KropicCore with tests (arrow, rectangle, text, highlight, blur, pixelate)
+- [x] Annotation editor window opened from the result panel header: tools, colors, undo and redo
+- [x] Copy the annotated image to the clipboard and share it through the macOS share menu
 
-Open questions to settle before planning: annotate in the overlay (before ✓) or in the result panel (after capture); whether sharing fits the "images never touch disk" rule (D-005), since some share targets may write files on their side.
+Settled: annotation happens after capture in an editor window (D-048); sharing amends D-005 (D-049).

@@ -16,6 +16,7 @@ final class AppState {
     private var onboardingWindow: HostingWindowController<OnboardingView>?
     private var settingsWindow: HostingWindowController<SettingsView>?
     private var historyWindow: HostingWindowController<HistoryView>?
+    private var annotationWindow: HostingWindowController<AnnotationEditorView>?
     private var currentResult: ResultViewModel?
     private let overlay: SelectionOverlayController
     private let capture = CaptureService()
@@ -41,6 +42,18 @@ final class AppState {
         Task { [history] in
             await history.reload()
         }
+    }
+
+    /// Opens the annotation editor for a capture, replacing an editor that is already open.
+    func annotate(_ result: ResultViewModel) {
+        guard let image = result.image else { return }
+        annotationWindow?.close()
+        let editor = AnnotationEditorViewModel(image: image, scale: result.scale)
+        // Floating, like the result panel, so it does not open behind it.
+        annotationWindow = HostingWindowController(title: String(localized: "Annotate"), level: .floating) {
+            AnnotationEditorView(model: editor)
+        }
+        annotationWindow?.show()
     }
 
     func showAbout() {
@@ -136,6 +149,9 @@ final class AppState {
         currentResult = model
         resultPanel.show(model, near: selection) { [weak self] in
             self?.startCapture()
+        } onAnnotate: { [weak self, weak model] in
+            guard let model else { return }
+            self?.annotate(model)
         } onClose: { [weak self] in
             self?.recognition?.cancel()
             self?.archiveCurrentResult()

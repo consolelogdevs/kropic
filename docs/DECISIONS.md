@@ -236,3 +236,23 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** `AppIcon.appiconset` and `MenuBarIcon.imageset` come from `design/icon/` (concept "A · crop corners"). The menu bar label is the vector `MenuBarIcon` as a template image. The same glyph replaces the `crop` SF Symbol as the brand mark in the result panel header (accent tint) and on the onboarding tile (white on the accent fill). The header's capture-again button keeps the `crop` SF Symbol because it is an action, not the logo. `Scripts/make-placeholder-icon.swift` is removed. Supersedes D-031 and D-046
 - **Why** The designed icon replaces the placeholder. A template image lets macOS tint the glyph for light and dark menu bars, and using one glyph everywhere ties the menu bar, panel and onboarding to the app icon. On the onboarding tile an accent tint would vanish on the accent background, so the glyph is white there. design/icon/README.md asks to check the Dock, but Kropic is a menu bar only app (`LSUIElement`) and has no Dock icon; Finder, the About panel and Login Items show the app icon instead
 - **Alternatives** Keeping SF Symbols in the app UI, or building an Icon Composer `.icon` now (planned before an App Store release, for the macOS 26 Liquid Glass look)
+
+### D-048 Annotate after capture, in an editor window
+- **Decision** An Annotate button in the result panel header opens an editor window for the captured image, instead of drawing tools on the selection overlay before confirming
+- **Why** On the overlay every drag already draws, moves or resizes the selection, so drawing tools there would give the same gesture two meanings. The result panel already holds the image in memory, and a window gives room for a toolbar, undo and share
+- **Alternatives** A toolbar on the selection like macOS's own screenshot tool, as the roadmap first suggested
+
+### D-049 Sharing amends D-005
+- **Decision** Kropic itself still never writes captured images to disk. "Share…" hands the annotated image to macOS at the user's request; share targets such as Mail or AirDrop may store their own temporary copy. "Copy Image" uses the clipboard only
+- **Why** Sharing is the point of Phase 7 and only ever happens on an explicit user action. Blur and pixelate let users hide sensitive content first
+- **Alternatives** Copy to clipboard only, with no share menu
+
+### D-050 Blur and pixelate with Core Graphics only
+- **Decision** Both shrink the marked area to a few samples and scale it back up: with smoothing for blur (about 6 samples across the shorter side), without it for pixelate (blocks of an eighth of the shorter side, at least 8 px). No Core Image
+- **Why** KropicCore stays on frameworks available on macOS and iOS without image filters, and the result is deterministic and testable. The strength is chosen so text underneath cannot be read; tests check that fine stripes disappear
+- **Alternatives** Core Image's Gaussian blur and pixellate filters, which would add a framework to the core and need a stronger setting to be safe against unblurring
+
+### D-051 Annotations drawn by one renderer
+- **Decision** `AnnotationRenderer` in KropicCore draws committed annotations into a copy of the image in image pixels (origin top-left). The editor shows that composite and only previews the shape being dragged with SwiftUI shapes. Copy and Share use the same composite
+- **Why** One drawing path means the shared image matches the screen exactly, and it is unit-testable by reading pixels. The original capture is never modified, so OCR and translation stay on the clean image
+- **Alternatives** Drawing annotations with SwiftUI on screen and separately for export

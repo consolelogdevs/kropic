@@ -7,6 +7,7 @@ struct ResultView: View {
     @Bindable var model: ResultViewModel
     let onCaptureAgain: () -> Void
     let onClose: () -> Void
+    var onAnnotate: () -> Void = {}
     /// Reports the content's height so the panel can resize itself.
     var onHeightChange: (CGFloat) -> Void = { _ in }
 
@@ -15,6 +16,8 @@ struct ResultView: View {
             ResultHeader(
                 sizeText: model.sizeText,
                 showsCaptureAgain: model.state == .recognized,
+                showsAnnotate: model.image != nil && model.state != .recognizing,
+                onAnnotate: onAnnotate,
                 onCaptureAgain: onCaptureAgain,
                 onClose: onClose
             )

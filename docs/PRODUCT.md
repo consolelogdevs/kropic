@@ -54,6 +54,10 @@ The last 20 results, text only (extracted text as edited, translation, languages
 
 The UI is in English. Every user facing string lives in a String Catalog (`Localizable.xcstrings`) so Turkish and other languages can be added later. The design artboards are in Turkish; their copy is translated to English.
 
+## Annotate and share (Phase 7)
+
+The result panel header has an Annotate button. It opens an editor window with the captured image and these tools: arrow, rectangle, text, highlight, blur and pixelate, five colors (red, yellow, blue, black, white), and undo and redo (⌘Z, ⇧⌘Z). Blur and pixelate make the text under them unreadable, for hiding sensitive content before sharing. "Copy Image" puts the annotated image on the clipboard; "Share…" opens the macOS share menu. The extracted text and translation always come from the original image. Annotations live in memory only and are gone when the editor closes.
+
 ## Not in v1
 
 - Cloud translation providers (the architecture must allow adding them later)
