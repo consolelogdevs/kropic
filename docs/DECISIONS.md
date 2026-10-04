@@ -221,3 +221,8 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** Overlay panels set `appearance = .aqua`, so their tokens (accent, accent fill) always resolve to the light values. The hint pill shows during the first 3 overlays, counted in `AppSettings.overlayUses`, on the display under the cursor only
 - **Why** design/README.md specifies one overlay look for both themes, since it always sits over a dimmed screen. "First few uses" needed a number; 3 is enough to learn four gestures without nagging
 - **Alternatives** Separate fixed color constants for the overlay, or a hint that never goes away
+
+### D-045 Hint pill on every capture
+- **Decision** The overlay's hint pill shows on every capture, on the display under the cursor. The first-use counter from D-044 is removed
+- **Why** Product decision after testing: the gestures stay discoverable at all times. Overrides design/README.md's "shown only on the first few uses"
+- **Alternatives** Showing it only on the first 3 uses (D-044), or a setting to hide it

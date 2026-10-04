@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Gesture hints at the top of the screen, shown during the first few uses.
+/// Gesture hints at the top of the screen, shown on every capture.
 struct SelectionHintPill: View {
     var body: some View {
         HStack(spacing: 10) {

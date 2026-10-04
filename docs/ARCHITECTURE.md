@@ -52,7 +52,7 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 **SelectionOverlay**
 - One borderless, transparent `NSPanel` per display, covering the full frame, at `.screenSaver` level (above the menu bar and Dock). Every display dims; the selection belongs to the display where the drag starts
 - A shared `SelectionModel` (`@Observable`) holds the selection for all displays
-- Hosts a SwiftUI view that draws the dim layer, the selection outline, resize handles, the size label, the cancel and confirm bar below the selection, and during the first 3 uses a hint pill below the menu bar on the display under the cursor (`AppSettings.overlayUses`). The panels always use the light appearance, so the overlay looks the same in both themes
+- Hosts a SwiftUI view that draws the dim layer, the selection outline, resize handles, the size label, the cancel and confirm bar below the selection, and a hint pill below the menu bar on the display under the cursor. The panels always use the light appearance, so the overlay looks the same in both themes
 - Kropic activates itself while the overlay is open (`FocusRestorer`) so the panels receive mouse and key events, and hands focus back to the previous app on cancel or when the result panel closes. Hosting views accept the first click so a drag on a non-key display works. Keys are intercepted in the panel's `sendEvent`
 - `SelectionOverlayController.select()` returns the selected rectangle in display-local points plus the display ID and frames, or `nil` on cancel
 

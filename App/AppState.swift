@@ -25,7 +25,7 @@ final class AppState {
     private let logger = Logger(subsystem: "app.kropic", category: "AppState")
 
     init() {
-        overlay = SelectionOverlayController(settings: settings)
+        overlay = SelectionOverlayController()
     }
 
     func start() {
