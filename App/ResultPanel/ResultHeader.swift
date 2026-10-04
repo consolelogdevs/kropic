@@ -10,9 +10,12 @@ struct ResultHeader: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: "crop")
-                .font(.system(size: 14, weight: .medium))
+            Image(.menuBarIcon)
+                .renderingMode(.template)
+                .resizable()
+                .frame(width: 16, height: 16)
                 .foregroundStyle(Color.accent)
+                .accessibilityHidden(true)
             Text(verbatim: "Kropic")
                 .fontWeight(.semibold)
                 .foregroundStyle(Color.textPrimary)

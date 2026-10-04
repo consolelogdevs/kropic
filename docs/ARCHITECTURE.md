@@ -18,7 +18,7 @@ Kropic/
 │   ├── Permissions/             Screen Recording check, onboarding view
 │   ├── Windows/                 HostingWindowController (onboarding, settings, history)
 │   ├── History/                 history window and view model
-│   ├── Resources/               Assets.xcassets (app icon, AccentColor, color tokens), Localizable.xcstrings
+│   ├── Resources/               Assets.xcassets (AppIcon and MenuBarIcon from design/icon/, AccentColor, color tokens), Localizable.xcstrings
 │   ├── Design/                  Theme (semantic tokens), Typography, Metrics; Components/ (shared views and button styles); Previews/ (debug render harness)
 │   ├── Capture/                 selection overlay windows and views, CaptureService
 │   ├── ResultPanel/             floating NSPanel, SwiftUI result view, view model

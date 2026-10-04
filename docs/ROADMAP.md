@@ -59,6 +59,7 @@ Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with ex
 - [x] Menu bar: crop icon, Recent Translations submenu, About Kropic
 - [x] History window restyled with the tokens (no design screen)
 - [x] Placeholder app icon redrawn with the crop glyph
+- [x] Final app icon and menu bar glyph from `design/icon/` (Icon Composer `.icon` file still to come before an App Store release)
 
 Done when every screen matches its design in light and dark mode.
 

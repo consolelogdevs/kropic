@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ · detected" : {
+
+    },
     "%@ language pack needed" : {
 
     },
@@ -13,9 +16,6 @@
           }
         }
       }
-    },
-    "%@ · detected" : {
-
     },
     "About Kropic" : {
 
@@ -44,13 +44,10 @@
     "Capture Again" : {
 
     },
-    "Capture Text" : {
-
-    },
-    "Capture again" : {
-
-    },
     "Capture shortcut" : {
+
+    },
+    "Capture Text" : {
 
     },
     "Captured area" : {
@@ -59,13 +56,13 @@
     "Captured images are never saved to disk. History keeps only the extracted text and the translation." : {
 
     },
+    "Clear all history?" : {
+
+    },
     "Clear History" : {
 
     },
     "Clear History…" : {
-
-    },
-    "Clear all history?" : {
 
     },
     "Click an entry to copy its text." : {
@@ -83,13 +80,13 @@
     "Copy" : {
 
     },
+    "Copy extracted text to the clipboard" : {
+
+    },
     "Copy Text" : {
 
     },
     "Copy Translation" : {
-
-    },
-    "Copy extracted text to the clipboard" : {
 
     },
     "Dark" : {
@@ -102,9 +99,6 @@
 
     },
     "Detected language" : {
-
-    },
-    "Disabled" : {
 
     },
     "Download" : {
@@ -131,10 +125,10 @@
     "Esc to close · %@ to capture again" : {
 
     },
-    "Esc to close · ⌘C copies the text" : {
+    "Esc to close · ⌘⇧C copies the translation" : {
 
     },
-    "Esc to close · ⌘⇧C copies the translation" : {
+    "Esc to close · ⌘C copies the text" : {
 
     },
     "Extracted text" : {
@@ -161,10 +155,10 @@
     "Kropic" : {
 
     },
-    "Kropic History" : {
+    "Kropic could not restart itself. Please quit it from the menu bar and open it again." : {
 
     },
-    "Kropic could not restart itself. Please quit it from the menu bar and open it again." : {
+    "Kropic History" : {
 
     },
     "Kropic is not allowed to record the screen. Turn it on in System Settings under Privacy & Security → Screen & System Audio Recording." : {
