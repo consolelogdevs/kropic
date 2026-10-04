@@ -201,3 +201,18 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** `App/Resources/Localizable.xcstrings` for the app and a second catalog inside KropicCore (`defaultLocalization: "en"`, `bundle: .module`). `Scripts/sync-strings.sh` builds and runs `xcstringstool sync` on the compiler's `.stringsdata`, skipping debug-only preview views
 - **Why** Xcode fills catalogs on build only in the IDE; `xcodebuild` emits the strings but never writes them back. A Swift package needs its own catalog to localize its error messages
 - **Alternatives** Relying on opening the project in Xcode, or moving KropicCore's user facing messages into the app target
+
+### D-041 Frameless result panel that grows downward
+- **Decision** The result panel is a borderless `NSPanel` whose SwiftUI content draws the rounded window, header and footer. An `NSHostingView` sizes the window to the content; once placed, `ResultPanel` keeps the top edge fixed when the height changes and keeps the panel on screen. Text areas grow up to 200 pt and then scroll
+- **Why** The design has its own 44 pt header instead of a title bar and a 12 pt corner radius. Growing downward keeps the panel next to the selection it belongs to
+- **Alternatives** A titled panel with a hidden, transparent title bar, whose corner radius and traffic lights follow the system instead of the spec
+
+### D-042 Full-width language pickers only on macOS 26
+- **Decision** The language pop-ups use `.buttonSizing(.flexible)` on macOS 26 so they fill their half of the row like the spec. On macOS 15 they keep the native intrinsic width
+- **Why** The modifier only exists from macOS 26, and design/README.md says the native pop-up look wins over the artboard
+- **Alternatives** A custom `Menu` drawn like the spec's select on every version
+
+### D-043 Extra token for muted boxes
+- **Decision** `mutedBackground` (#EEEEF0 light, #2C2C2E dark) joins the asset catalog for translation states without a translation, such as "Translation starts automatically when the text is ready"
+- **Why** The Loading artboard uses this color, but design/README.md's token table does not list it
+- **Alternatives** Reusing `chipBackground`, which is darker in dark mode

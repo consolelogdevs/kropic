@@ -1,6 +1,22 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ language pack needed" : {
+
+    },
+    "%@ pt · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ pt · %2$@"
+          }
+        }
+      }
+    },
+    "%@ · detected" : {
+
+    },
     "%lld × %lld" : {
       "localizations" : {
         "en" : {
@@ -17,13 +33,25 @@
     "Allow Kropic in System Settings to finish turning this on." : {
 
     },
+    "Apple Translation · on device" : {
+
+    },
     "Capture (Return)" : {
+
+    },
+    "Capture Again" : {
 
     },
     "Capture Text" : {
 
     },
+    "Capture again" : {
+
+    },
     "Capture shortcut" : {
+
+    },
+    "Captured area" : {
 
     },
     "Clear History" : {
@@ -36,6 +64,12 @@
 
     },
     "Click an entry to copy its text." : {
+
+    },
+    "Close" : {
+
+    },
+    "Close (Esc)" : {
 
     },
     "Copied" : {
@@ -56,13 +90,43 @@
     "Default target language" : {
 
     },
-    "Detect Language" : {
+    "Detect Automatically" : {
 
     },
-    "Detected: %@" : {
+    "Detected language" : {
+
+    },
+    "Disabled" : {
+
+    },
+    "Download" : {
 
     },
     "Download…" : {
+
+    },
+    "Esc to cancel" : {
+
+    },
+    "Esc to close" : {
+
+    },
+    "Esc to close · %@ to capture again" : {
+
+    },
+    "Esc to close · ⌘C copies the text" : {
+
+    },
+    "Esc to close · ⌘⇧C copies the translation" : {
+
+    },
+    "Extracted text" : {
+
+    },
+    "Extracting text" : {
+
+    },
+    "Extracting text…" : {
 
     },
     "From" : {
@@ -113,7 +177,10 @@
     "No History" : {
 
     },
-    "No text found in the selected area" : {
+    "No text found in this area" : {
+
+    },
+    "Not Now" : {
 
     },
     "Open Login Items" : {
@@ -125,13 +192,13 @@
     "Quit Kropic" : {
 
     },
-    "Recognizing text…" : {
-
-    },
     "Restart Kropic" : {
 
     },
     "Results you capture will appear here." : {
+
+    },
+    "Retina %lld×" : {
 
     },
     "Save history" : {
@@ -143,7 +210,16 @@
     "Settings…" : {
 
     },
+    "Something went wrong" : {
+
+    },
     "Source and target are the same language." : {
+
+    },
+    "Standard %lld×" : {
+
+    },
+    "Swap Languages" : {
 
     },
     "Text" : {
@@ -158,6 +234,9 @@
     "The selected area could not be captured. Please try again." : {
 
     },
+    "The selection may contain a photo or very small text. Try selecting a slightly larger area." : {
+
+    },
     "This removes all saved results. It can't be undone." : {
 
     },
@@ -170,6 +249,9 @@
     "Translate automatically" : {
 
     },
+    "Translating %@ needs a language pack that isn't downloaded yet." : {
+
+    },
     "Translating from %@ to %@ isn't supported." : {
       "localizations" : {
         "en" : {
@@ -180,13 +262,16 @@
         }
       }
     },
-    "Translating needs a language pack that isn't downloaded yet. The extracted text above is still available." : {
-
-    },
     "Translation" : {
 
     },
     "Translation between these languages isn't supported." : {
+
+    },
+    "Translation runs on this Mac, so this language pair has to be downloaded once. The extracted text is ready to copy already." : {
+
+    },
+    "Translation starts automatically when the text is ready." : {
 
     },
     "Try Again" : {

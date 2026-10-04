@@ -1,28 +1,35 @@
+import KeyboardShortcuts
 import SwiftUI
 
+/// The result panel: header, captured image on the left, text and translation on the right, footer.
+/// 760 pt wide; at least 440 pt high and taller for long text.
 struct ResultView: View {
     @Bindable var model: ResultViewModel
-    let onRetry: () -> Void
-
-    private static let textColumnWidth: CGFloat = 320
-    private static let minimumHeight: CGFloat = 380
+    let onCaptureAgain: () -> Void
+    let onClose: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            if let image = model.image {
-                let size = model.imageDisplaySize
-                Image(decorative: image, scale: model.scale)
-                    .resizable()
-                    .interpolation(.high)
-                    .frame(width: size.width, height: size.height)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(.separator))
+        VStack(spacing: 0) {
+            ResultHeader(
+                sizeText: model.sizeText,
+                showsCaptureAgain: model.state == .recognized,
+                onCaptureAgain: onCaptureAgain,
+                onClose: onClose
+            )
+            HStack(alignment: .top, spacing: Metrics.ResultPanel.columnGap) {
+                CapturedImageColumn(model: model)
+                rightColumn
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
-
-            textColumn
-                .frame(width: Self.textColumnWidth, height: max(model.imageDisplaySize.height, Self.minimumHeight))
+            .padding(Metrics.ResultPanel.contentPadding)
+            .frame(maxHeight: .infinity, alignment: .top)
+            PanelFooter(hint: footerHint, note: String(localized: "Apple Translation · on device"))
         }
-        .padding(16)
+        .frame(width: Metrics.ResultPanel.width)
+        .frame(minHeight: Metrics.ResultPanel.designHeight)
+        .background(Color.panelBackground)
+        .clipShape(RoundedRectangle(cornerRadius: Metrics.ResultPanel.cornerRadius))
+        .overlay(RoundedRectangle(cornerRadius: Metrics.ResultPanel.cornerRadius).strokeBorder(Color.panelSeparator))
         .modifier(TranslationHost(provider: model.translationProvider))
         .task {
             await model.translation.loadLanguages()
@@ -30,49 +37,52 @@ struct ResultView: View {
     }
 
     @ViewBuilder
-    private var textColumn: some View {
+    private var rightColumn: some View {
         switch model.state {
-        case .recognizing:
-            VStack(spacing: 8) {
-                ProgressView()
-                    .controlSize(.small)
-                Text("Recognizing text…")
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-        case .recognized:
-            VStack(alignment: .trailing, spacing: 8) {
-                TextEditor(text: $model.text)
-                    .font(.body)
-                    .scrollContentBackground(.hidden)
-                    .padding(6)
-                    .background(RoundedRectangle(cornerRadius: 6).fill(Color(nsColor: .textBackgroundColor)))
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(.separator))
-
-                CopyButton(text: model.text)
-
-                TranslationView(model: model.translation)
+        case .recognizing, .recognized:
+            VStack(alignment: .leading, spacing: Metrics.ResultPanel.rightColumnGap) {
+                ExtractedTextSection(model: model)
+                LanguageBar(model: model.translation, canSwap: model.canSwapLanguages, onSwap: model.swapLanguages)
+                TranslationSection(model: model.translation, isWaitingForText: model.state == .recognizing)
             }
 
         case .noText:
-            message(String(localized: "No text found in the selected area"), systemImage: "text.magnifyingglass")
+            EmptyStateView(
+                systemImage: "text.magnifyingglass",
+                title: String(localized: "No text found in this area"),
+                message: String(localized: "The selection may contain a photo or very small text. Try selecting a slightly larger area.")
+            ) {
+                Button("Close", action: onClose).buttonStyle(SecondaryButtonStyle())
+                Button("Capture Again", action: onCaptureAgain).buttonStyle(PrimaryButtonStyle())
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-        case .failed(let text):
-            message(text, systemImage: "exclamationmark.triangle")
+        case .failed(let message):
+            EmptyStateView(
+                systemImage: "exclamationmark.triangle",
+                title: String(localized: "Something went wrong"),
+                message: message
+            ) {
+                Button("Close", action: onClose).buttonStyle(SecondaryButtonStyle())
+                Button("Capture Again", action: onCaptureAgain).buttonStyle(PrimaryButtonStyle())
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
-    private func message(_ text: String, systemImage: String) -> some View {
-        VStack(spacing: 12) {
-            Image(systemName: systemImage)
-                .font(.title2)
-                .foregroundStyle(.secondary)
-            Text(text)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-            Button("Try Again", action: onRetry)
+    private var footerHint: String {
+        switch model.state {
+        case .recognizing:
+            return String(localized: "Esc to cancel")
+        case .noText, .failed:
+            let shortcut = KeyboardShortcuts.getShortcut(for: .captureText)?.description ?? ""
+            return shortcut.isEmpty
+                ? String(localized: "Esc to close")
+                : String(localized: "Esc to close · \(shortcut) to capture again")
+        case .recognized:
+            return model.translation.translatedText == nil
+                ? String(localized: "Esc to close · ⌘C copies the text")
+                : String(localized: "Esc to close · ⌘⇧C copies the translation")
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

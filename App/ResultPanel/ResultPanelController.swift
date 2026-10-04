@@ -16,15 +16,22 @@ final class ResultPanelController {
             model?.translation.cancel()
             onClose()
         }
-        let hostingController = NSHostingController(rootView: ResultView(model: model, onRetry: onRetry))
-        panel.contentViewController = hostingController
+        panel.onCopyText = { [weak model] in model?.copyText() }
+        panel.onCopyTranslation = { [weak model] in model?.copyTranslation() }
 
-        let contentSize = hostingController.view.fittingSize
-        let frameSize = panel.frameRect(forContentRect: CGRect(origin: .zero, size: contentSize)).size
+        let view = ResultView(model: model, onCaptureAgain: onRetry) { [weak panel] in
+            panel?.close()
+        }
+        // The hosting view sizes the window to the SwiftUI content, so the panel grows with long text.
+        let hostingView = NSHostingView(rootView: view)
+        panel.contentView = hostingView
+
+        let size = hostingView.fittingSize
         let visible = ScreenGeometry.displayLocalRect(fromGlobal: selection.visibleFrame, displayFrame: selection.displayFrame)
-        let local = Placement.panelFrame(size: frameSize, beside: selection.rect, in: visible, gap: Self.gap)
+        let local = Placement.panelFrame(size: size, beside: selection.rect, in: visible, gap: Self.gap)
         let global = ScreenGeometry.globalRect(fromDisplayLocal: local, displayFrame: selection.displayFrame)
         panel.setFrame(global, display: true)
+        panel.anchorsTop = true
 
         panel.makeKeyAndOrderFront(nil)
         self.panel = panel

@@ -50,9 +50,9 @@ Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with ex
 - [x] Color tokens in the asset catalog (Any and Dark), fixed accent, type and spacing constants, AppearanceService, preview render harness
 - [x] String Catalog with all user facing strings in English
 - [x] Shared components (section label, chip, text button, primary and secondary buttons, field, status card, footer)
-- [ ] Result panel shell: custom header and footer, 760 pt wide layout, image column with caption, grows for long text
-- [ ] Result panel states: main, loading with placeholder bars, no text, language pack notice (notice first, then Apple's prompt)
-- [ ] Result panel features: swap languages, capture again, ⌘C and ⌘⇧C
+- [x] Result panel shell: custom header and footer, 760 pt wide layout, image column with caption, grows for long text
+- [x] Result panel states: main, loading with placeholder bars, no text, language pack notice (notice first, then Apple's prompt)
+- [x] Result panel features: swap languages, capture again, ⌘C and ⌘⇧C
 - [ ] Selection overlay: dim, outline, handles, size label, cancel and confirm bar, hint pill on first uses
 - [ ] Onboarding window with numbered steps and "Not Now"
 - [ ] Settings window: sections and order from the spec, subtitles, Appearance picker, footer note

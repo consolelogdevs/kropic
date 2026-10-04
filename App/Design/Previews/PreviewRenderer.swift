@@ -19,6 +19,10 @@ enum PreviewRenderer {
         [
             Entry(name: "Tokens", view: AnyView(TokenSwatchView())),
             Entry(name: "Components", view: AnyView(ComponentGalleryView())),
+            Entry(name: "Main", view: AnyView(ResultPreviews.main)),
+            Entry(name: "Loading", view: AnyView(ResultPreviews.loading)),
+            Entry(name: "NoText", view: AnyView(ResultPreviews.noText)),
+            Entry(name: "LangPack", view: AnyView(ResultPreviews.languagePack)),
         ]
     }
 

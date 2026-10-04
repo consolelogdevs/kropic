@@ -11,13 +11,17 @@ final class TranslationViewModel {
     }
 
     enum State: Equatable {
+        /// No text yet, or nothing to translate.
         case idle
         /// Automatic translation is off; waiting for the Translate button.
         case ready
         case sameLanguage
         case translating
         case translated(String)
+        /// The pair is downloadable but not installed; the notice asks first (D-037).
         case needsDownload
+        /// The user chose "Not Now" on the download notice.
+        case downloadDeclined
         case unsupported
         case failed(String)
     }
@@ -45,6 +49,9 @@ final class TranslationViewModel {
     @ObservationIgnored private let detector = LanguageDetector()
     @ObservationIgnored private var text = ""
     @ObservationIgnored private var work: Task<Void, Never>?
+    /// Pairs the user agreed to download in this panel, as "source>target".
+    @ObservationIgnored private var approvedDownloads: Set<String> = []
+    @ObservationIgnored private var suspendsRequests = false
 
     init(translator: any Translating, settings: AppSettings) {
         self.translator = translator
@@ -56,6 +63,23 @@ final class TranslationViewModel {
         case .automatic: detectedLanguage
         case .language(let language): language
         }
+    }
+
+    var translatedText: String? {
+        if case .translated(let text) = state { text } else { nil }
+    }
+
+    /// "English · detected" for the chip next to the extracted text label.
+    var detectedChipText: String? {
+        guard sourceSelection == .automatic, let detectedLanguage else { return nil }
+        return String(localized: "\(LanguageCatalog.displayName(detectedLanguage)) · detected")
+    }
+
+    /// "Japanese → Turkish"
+    var pairName: String {
+        let sourceName = source.map(LanguageCatalog.displayName) ?? String(localized: "Detected language")
+        let targetName = target.map(LanguageCatalog.displayName) ?? ""
+        return "\(sourceName) → \(targetName)"
     }
 
     func loadLanguages() async {
@@ -78,8 +102,32 @@ final class TranslationViewModel {
         requestTranslation(after: debounce ? Self.editDebounce : .zero)
     }
 
-    /// The Translate, Try Again and Download buttons.
+    /// The Translate and Try Again buttons.
     func translateNow() {
+        schedule()
+    }
+
+    /// "Download" on the language pack notice: translating the pair makes macOS show its prompt.
+    func downloadLanguagePack() {
+        if let key = pairKey {
+            approvedDownloads.insert(key)
+        }
+        schedule()
+    }
+
+    /// "Not Now" on the language pack notice.
+    func declineDownload() {
+        cancel()
+        state = .downloadDeclined
+    }
+
+    func swapLanguages(newText: String) {
+        guard let oldSource = source, let oldTarget = target else { return }
+        suspendsRequests = true
+        sourceSelection = .language(oldTarget)
+        target = oldSource
+        suspendsRequests = false
+        text = newText
         schedule()
     }
 
@@ -88,8 +136,14 @@ final class TranslationViewModel {
         work = nil
     }
 
+    private var pairKey: String? {
+        guard let target else { return nil }
+        return "\(source?.minimalIdentifier ?? "auto")>\(target.minimalIdentifier)"
+    }
+
     /// Translates now or after `delay` when automatic translation is on, otherwise waits for the button.
     private func requestTranslation(after delay: Duration = .zero) {
+        guard !suspendsRequests else { return }
         if settings.translateAutomatically {
             schedule(after: delay)
         } else {
@@ -124,9 +178,15 @@ final class TranslationViewModel {
         state = .translating
         let availability = await translator.availability(from: source, to: target, text: text)
         guard !Task.isCancelled else { return }
-        if availability == .unsupported {
+        switch availability {
+        case .unsupported:
             state = .unsupported
             return
+        case .downloadable where !approvedDownloads.contains(pairKey ?? ""):
+            state = .needsDownload
+            return
+        case .installed, .downloadable:
+            break
         }
 
         do throws(TranslationFailure) {
@@ -141,9 +201,22 @@ final class TranslationViewModel {
             switch error {
             case .cancelled: break
             case .unsupportedPair: state = .unsupported
-            case .languagePackMissing: state = .needsDownload
+            case .languagePackMissing:
+                // The user declined Apple's prompt; ask again next time.
+                if let key = pairKey { approvedDownloads.remove(key) }
+                state = .needsDownload
             case .unidentifiedLanguage, .failed: state = .failed(error.localizedDescription)
             }
         }
     }
+
+    #if DEBUG
+    func setPreview(languages: [Locale.Language], detected: Locale.Language?, target: Locale.Language?, state: State) {
+        suspendsRequests = true
+        self.languages = languages
+        detectedLanguage = detected
+        self.target = target
+        self.state = state
+    }
+    #endif
 }

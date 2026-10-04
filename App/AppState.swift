@@ -94,10 +94,10 @@ final class AppState {
         let image: CGImage
         do {
             image = try await capture.capture(selection.rect, on: selection.displayID)
-            model = ResultViewModel(image: image, scale: CGFloat(image.width) / selection.rect.width, settings: settings)
+            model = ResultViewModel(image: image, scale: CGFloat(image.width) / selection.rect.width, selectionSize: selection.rect.size, settings: settings)
         } catch {
             logger.error("Capture failed: \(String(describing: error))")
-            showResult(ResultViewModel(captureFailure: error.localizedDescription, settings: settings), near: selection)
+            showResult(ResultViewModel(captureFailure: error.localizedDescription, selectionSize: selection.rect.size, settings: settings), near: selection)
             return
         }
 

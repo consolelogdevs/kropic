@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Copies `text` to the clipboard and shows "Copied" for a moment.
+/// "Copy" in a section header. Shows "Copied" for a moment after copying.
 struct CopyButton: View {
     let text: String
 
@@ -18,6 +18,7 @@ struct CopyButton: View {
                 didCopy = false
             }
         }
+        .buttonStyle(TextActionButtonStyle())
         .disabled(text.isEmpty)
     }
 }

@@ -79,7 +79,7 @@ KropicCore must compile for both macOS and iOS so a future iPhone app can reuse 
 
 **Settings and History** are AppKit-hosted windows (`HostingWindowController`), not SwiftUI scenes, so they come to the front in a menu bar only app. `AppSettings` is the single owner of UserDefaults keys. `LaunchAtLogin` wraps `SMAppService.mainApp`; its state lives in the system. `HistoryStore` (KropicCore actor) keeps the newest 20 entries in `History.json` in Application Support (the sandbox container). `AppState` saves the open result when its panel closes or is replaced.
 
-**ResultPanel** is a floating `NSPanel` positioned next to the selection (right, left, below, above) and clamped to the visible frame of that display (`Placement.panelFrame`). Content is SwiftUI. The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
+**ResultPanel** is a floating, frameless `NSPanel` positioned next to the selection (right, left, below, above) and clamped to the visible frame of that display (`Placement.panelFrame`). Content is SwiftUI in an `NSHostingView`, which sizes the window: 760 pt wide, at least 440 pt high, taller for long text. After placement the panel keeps its top edge when it grows and stays on screen. SwiftUI draws the rounded window (radius 12), the draggable header (`WindowDragGesture`) and the footer. The panel handles Esc, ⌘C (all text unless a field has a selection) and ⌘⇧C (translation). A downloadable language pair shows a notice first; only "Download" triggers Apple's prompt (D-037). The view model holds image, extracted text, detected and chosen languages, translation and loading or error state.
 
 ## Concurrency
 
