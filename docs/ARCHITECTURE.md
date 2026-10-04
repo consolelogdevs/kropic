@@ -19,7 +19,7 @@ Kropic/
 │   ├── Windows/                 HostingWindowController (onboarding, settings, history)
 │   ├── History/                 history window and view model
 │   ├── Resources/               Assets.xcassets (app icon, AccentColor, color tokens), Localizable.xcstrings
-│   ├── Design/                  Theme (semantic tokens), Typography, Metrics; Previews/ (debug render harness)
+│   ├── Design/                  Theme (semantic tokens), Typography, Metrics; Components/ (shared views and button styles); Previews/ (debug render harness)
 │   ├── Capture/                 selection overlay windows and views, CaptureService
 │   ├── ResultPanel/             floating NSPanel, SwiftUI result view, view model
 │   ├── Translation/             AppleTranslationProvider (needs SwiftUI, see below)

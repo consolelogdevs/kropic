@@ -16,19 +16,19 @@ enum PreviewRenderer {
     }
 
     private static var entries: [Entry] {
-        [Entry(name: "Tokens", view: AnyView(TokenSwatchView()))]
+        [
+            Entry(name: "Tokens", view: AnyView(TokenSwatchView())),
+            Entry(name: "Components", view: AnyView(ComponentGalleryView())),
+        ]
     }
 
     static func renderAll() -> URL {
         let directory = FileManager.default.temporaryDirectory.appending(path: "renders")
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         for entry in entries {
-            for (suffix, appearance, scheme) in [("", NSAppearance.Name.aqua, ColorScheme.light), ("Dark", .darkAqua, .dark)] {
+            for (suffix, appearance) in [("", NSAppearance.Name.aqua), ("Dark", .darkAqua)] {
                 if let data = snapshot(entry.view, appearance: appearance) {
                     try? data.write(to: directory.appending(path: "\(entry.name)\(suffix).png"))
-                }
-                if let data = imageRenderer(entry.view, appearance: appearance, scheme: scheme) {
-                    try? data.write(to: directory.appending(path: "\(entry.name)\(suffix)-ImageRenderer.png"))
                 }
             }
         }
@@ -54,19 +54,8 @@ enum PreviewRenderer {
         let srgb = bitmap.converting(to: .sRGB, renderingIntent: .default) ?? bitmap
         return srgb.representation(using: .png, properties: [:])
     }
-
-    private static func imageRenderer(_ view: AnyView, appearance: NSAppearance.Name, scheme: ColorScheme) -> Data? {
-        let renderer = ImageRenderer(content: view.environment(\.colorScheme, scheme))
-        renderer.scale = 2
-        var data: Data?
-        NSAppearance(named: appearance)?.performAsCurrentDrawingAppearance {
-            if let image = renderer.cgImage {
-                data = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])
-            }
-        }
-        return data
-    }
 }
+
 private final class RenderWindow: NSWindow {
     init(contentRect: CGRect) {
         super.init(contentRect: contentRect, styleMask: [.borderless], backing: .buffered, defer: false)

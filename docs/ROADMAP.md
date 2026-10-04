@@ -49,7 +49,7 @@ Done when captures are pixel-accurate on a Retina display and on an external dis
 Spec: `design/screens/` (light and dark PNGs) and `design/source/` (HTML with exact values).
 - [x] Color tokens in the asset catalog (Any and Dark), fixed accent, type and spacing constants, AppearanceService, preview render harness
 - [x] String Catalog with all user facing strings in English
-- [ ] Shared components (section label, chip, text button, primary and secondary buttons, field, status card, footer)
+- [x] Shared components (section label, chip, text button, primary and secondary buttons, field, status card, footer)
 - [ ] Result panel shell: custom header and footer, 760 pt wide layout, image column with caption, grows for long text
 - [ ] Result panel states: main, loading with placeholder bars, no text, language pack notice (notice first, then Apple's prompt)
 - [ ] Result panel features: swap languages, capture again, ⌘C and ⌘⇧C
