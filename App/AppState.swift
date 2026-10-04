@@ -32,6 +32,7 @@ final class AppState {
     }
 
     func start() {
+        AppearanceService.apply(settings.appearance)
         hotkeys.start { [weak self] in
             self?.startCapture()
         }

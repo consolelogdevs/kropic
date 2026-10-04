@@ -11,6 +11,7 @@ final class AppSettings {
         static let translateAutomatically = "translateAutomatically"
         static let copyTextAutomatically = "copyTextAutomatically"
         static let saveHistory = "saveHistory"
+        static let appearance = "appearance"
     }
 
     @ObservationIgnored private let defaults: UserDefaults
@@ -36,6 +37,14 @@ final class AppSettings {
         didSet { defaults.set(saveHistory, forKey: Key.saveHistory) }
     }
 
+    /// Applied immediately to every window through `AppearanceService`.
+    var appearance: AppearanceMode {
+        didSet {
+            defaults.set(appearance.rawValue, forKey: Key.appearance)
+            AppearanceService.apply(appearance)
+        }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         defaults.register(defaults: [
@@ -48,6 +57,7 @@ final class AppSettings {
         translateAutomatically = defaults.bool(forKey: Key.translateAutomatically)
         copyTextAutomatically = defaults.bool(forKey: Key.copyTextAutomatically)
         saveHistory = defaults.bool(forKey: Key.saveHistory)
+        appearance = defaults.string(forKey: Key.appearance).flatMap(AppearanceMode.init(rawValue:)) ?? .system
     }
 
     /// The target to start a new capture with: the fixed default if set, else the last used one.
