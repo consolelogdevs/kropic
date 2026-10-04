@@ -1,42 +1,67 @@
 import SwiftUI
 
+/// Screen Recording permission window: app tile, explanation, three steps and actions.
 struct OnboardingView: View {
     let permissions: PermissionService
+    let onLater: () -> Void
 
     @State private var errorMessage: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Label("Kropic needs screen recording access", systemImage: "text.viewfinder")
-                .font(.title3.bold())
+        VStack(spacing: 12) {
+            AppTile()
 
-            Text("Kropic reads text from the part of the screen you select. macOS treats that as screen recording, so turn Kropic on in System Settings under Privacy & Security → Screen & System Audio Recording. Images never leave your Mac and are never saved.")
+            Text("Allow Kropic to see your screen")
+                .font(.onboardingTitle)
+                .foregroundStyle(Color.textPrimary)
+                .padding(.top, 4)
+
+            Text("Kropic needs to see the screen to read the text in the area you select. Images are processed in memory only, never saved and never sent anywhere.")
+                .font(.kropicBody)
+                .lineSpacing(4)
+                .foregroundStyle(Color.textSecondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 420)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("After you turn it on, macOS usually needs Kropic to restart.")
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
+            OnboardingSteps(steps: [
+                String(localized: "Open System Settings with the button below"),
+                String(localized: "Turn on the switch next to Kropic in the list"),
+                String(localized: "Restart Kropic if macOS asks for it"),
+            ])
+            .padding(.top, 6)
 
-            if let errorMessage {
-                Text(errorMessage)
-                    .foregroundStyle(.red)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-
-            HStack {
-                Spacer()
-                Button("Restart Kropic") {
-                    restart()
-                }
+            HStack(spacing: 8) {
+                Button("Not Now", action: onLater)
+                    .buttonStyle(SecondaryButtonStyle())
                 Button("Open System Settings") {
                     permissions.requestScreenRecordingAccess()
                     permissions.openScreenRecordingSettings()
                 }
+                .buttonStyle(PrimaryButtonStyle())
                 .keyboardShortcut(.defaultAction)
             }
+            .padding(.top, 8)
+
+            Button("I've allowed it, restart Kropic", action: restart)
+                .buttonStyle(.link)
+                .font(.smallButton)
+                .tint(.accent)
+                .frame(height: 24)
+
+            if let errorMessage {
+                Text(verbatim: errorMessage)
+                    .font(.smallButton)
+                    .foregroundStyle(Color.danger)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
-        .padding(20)
-        .frame(width: 420)
+        .padding(.horizontal, 48)
+        .padding(.top, 4)
+        .padding(.bottom, 28)
+        .frame(width: 560)
+        .background(Color.panelBackground.ignoresSafeArea())
     }
 
     private func restart() {

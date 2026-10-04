@@ -12,7 +12,7 @@ final class AppState {
     private let hotkeys = HotkeyService()
     private let launchAtLogin = LaunchAtLogin()
     private let history = HistoryViewModel(store: HistoryStore(fileURL: HistoryStore.defaultFileURL()))
-    private let onboarding: HostingWindowController<OnboardingView>
+    private var onboardingWindow: HostingWindowController<OnboardingView>?
     private var settingsWindow: HostingWindowController<SettingsView>?
     private var historyWindow: HostingWindowController<HistoryView>?
     private var currentResult: ResultViewModel?
@@ -25,11 +25,7 @@ final class AppState {
     private let logger = Logger(subsystem: "app.kropic", category: "AppState")
 
     init() {
-        let permissions = permissions
         overlay = SelectionOverlayController(settings: settings)
-        onboarding = HostingWindowController(title: String(localized: "Welcome to Kropic")) {
-            OnboardingView(permissions: permissions)
-        }
     }
 
     func start() {
@@ -38,20 +34,32 @@ final class AppState {
             self?.startCapture()
         }
         if !permissions.hasScreenRecordingAccess {
-            onboarding.show()
+            showOnboarding()
         }
     }
 
     func startCapture() {
         guard permissions.hasScreenRecordingAccess else {
             logger.info("Capture requested without Screen Recording permission")
-            onboarding.show()
+            showOnboarding()
             return
         }
         guard !overlay.isPresented else { return }
         Task {
             await runCapture()
         }
+    }
+
+    func showOnboarding() {
+        if onboardingWindow == nil {
+            let permissions = permissions
+            onboardingWindow = HostingWindowController(title: String(localized: "Welcome to Kropic"), titleBar: .transparent) {
+                OnboardingView(permissions: permissions) { [weak self] in
+                    self?.onboardingWindow?.close()
+                }
+            }
+        }
+        onboardingWindow?.show()
     }
 
     func showSettings() {

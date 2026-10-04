@@ -17,10 +17,10 @@
     "%@ · detected" : {
 
     },
-    "After you turn it on, macOS usually needs Kropic to restart." : {
+    "Allow Kropic in System Settings to finish turning this on." : {
 
     },
-    "Allow Kropic in System Settings to finish turning this on." : {
+    "Allow Kropic to see your screen" : {
 
     },
     "Apple Translation · on device" : {
@@ -146,6 +146,9 @@
     "History…" : {
 
     },
+    "I've allowed it, restart Kropic" : {
+
+    },
     "Kropic" : {
 
     },
@@ -161,10 +164,7 @@
     "Kropic is not allowed to record the screen. Turn it on in System Settings under Privacy & Security → Screen & System Audio Recording." : {
 
     },
-    "Kropic needs screen recording access" : {
-
-    },
-    "Kropic reads text from the part of the screen you select. macOS treats that as screen recording, so turn Kropic on in System Settings under Privacy & Security → Screen & System Audio Recording. Images never leave your Mac and are never saved." : {
+    "Kropic needs to see the screen to read the text in the area you select. Images are processed in memory only, never saved and never sent anywhere." : {
 
     },
     "Last used" : {
@@ -191,10 +191,13 @@
     "Open System Settings" : {
 
     },
+    "Open System Settings with the button below" : {
+
+    },
     "Quit Kropic" : {
 
     },
-    "Restart Kropic" : {
+    "Restart Kropic if macOS asks for it" : {
 
     },
     "Results you capture will appear here." : {
@@ -277,6 +280,9 @@
 
     },
     "Try Again" : {
+
+    },
+    "Turn on the switch next to Kropic in the list" : {
 
     },
     "Welcome to Kropic" : {

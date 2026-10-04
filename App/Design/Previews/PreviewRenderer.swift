@@ -25,6 +25,7 @@ enum PreviewRenderer {
             Entry(name: "LangPack", view: AnyView(ResultPreviews.languagePack)),
             Entry(name: "LongText", view: AnyView(ResultPreviews.longText)),
             Entry(name: "Overlay", view: AnyView(OverlayPreview())),
+            Entry(name: "Onboarding", view: AnyView(OnboardingPreview())),
         ]
     }
 
