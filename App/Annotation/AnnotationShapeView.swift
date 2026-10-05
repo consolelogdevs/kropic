@@ -3,10 +3,12 @@ import SwiftUI
 
 /// Draws one annotation for on-screen preview, in a top-leading overlay. Coordinates are
 /// multiplied by `pointsPerUnit` (1 when the annotation is already in points). Blur and
-/// pixelate show a frosted area here; the real effect is applied to the captured image.
+/// pixelate show `redaction`, the real effect rendered from a screen snapshot, or frosted
+/// glass until that is ready.
 struct AnnotationShapeView: View {
     let annotation: Annotation
     var pointsPerUnit: CGFloat = 1
+    var redaction: (image: CGImage, scale: CGFloat)?
 
     var body: some View {
         let color = annotation.color.color
@@ -15,6 +17,11 @@ struct AnnotationShapeView: View {
         case .arrow(let start, let end):
             ArrowShape(start: point(start), end: point(end), lineWidth: width)
                 .fill(color)
+        case .pen(let points):
+            Path { path in
+                path.addLines(points.map(point))
+            }
+            .stroke(color, style: StrokeStyle(lineWidth: width, lineCap: .round, lineJoin: .round))
         case .rectangle(let rect):
             Rectangle().strokeBorder(color, lineWidth: width).placed(in: self.rect(rect))
         case .highlight(let rect):
@@ -26,9 +33,16 @@ struct AnnotationShapeView: View {
                 .fixedSize()
                 .offset(x: origin.x * pointsPerUnit, y: origin.y * pointsPerUnit)
         case .blur(let rect), .pixelate(let rect):
-            BehindWindowBlur()
-                .overlay(Rectangle().strokeBorder(.white.opacity(0.7), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
-                .placed(in: self.rect(rect))
+            Group {
+                if let redaction {
+                    Image(decorative: redaction.image, scale: redaction.scale)
+                        .resizable()
+                        .interpolation(.none)
+                } else {
+                    BehindWindowBlur()
+                }
+            }
+            .placed(in: self.rect(rect))
         }
     }
 

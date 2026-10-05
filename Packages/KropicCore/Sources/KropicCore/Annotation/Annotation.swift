@@ -5,6 +5,8 @@ import Foundation
 public struct Annotation: Identifiable, Sendable, Equatable {
     public enum Kind: Sendable, Equatable {
         case arrow(from: CGPoint, to: CGPoint)
+        /// A freehand stroke through these points.
+        case pen([CGPoint])
         case rectangle(CGRect)
         /// `origin` is the top-left corner of the text.
         case text(String, origin: CGPoint, fontSize: CGFloat)

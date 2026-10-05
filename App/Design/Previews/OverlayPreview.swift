@@ -32,13 +32,24 @@ struct OverlayPreview: View {
 
     private var annotations: OverlayAnnotations {
         let annotations = OverlayAnnotations()
+        let box = Annotation(kind: .rectangle(CGRect(x: 420, y: 330, width: 230, height: 34)), color: .red, lineWidth: 3)
         annotations.setPreview([
-            Annotation(kind: .rectangle(CGRect(x: 420, y: 330, width: 230, height: 34)), color: .red, lineWidth: 3),
+            box,
             Annotation(kind: .arrow(from: CGPoint(x: 760, y: 455), to: CGPoint(x: 660, y: 372)), color: .red, lineWidth: 3),
             Annotation(kind: .highlight(CGRect(x: 650, y: 400, width: 330, height: 26)), color: .yellow, lineWidth: 3),
-            Annotation(kind: .text("Check this", origin: CGPoint(x: 780, y: 438), fontSize: 18), color: .blue, lineWidth: 3),
-        ], tool: .arrow)
+            Annotation(kind: .pen(Self.squiggle), color: .blue, lineWidth: 3),
+            Annotation(kind: .blur(CGRect(x: 420, y: 400, width: 225, height: 26)), lineWidth: 3),
+            Annotation(kind: .pixelate(CGRect(x: 790, y: 330, width: 225, height: 34)), lineWidth: 3),
+        ], tool: nil, selected: box.id)
+        if let snapshot = ImageRenderer(content: desktop.frame(width: Self.screenSize.width, height: Self.screenSize.height)).cgImage {
+            annotations.setSnapshot(.init(image: snapshot, scale: 1), for: 1)
+        }
         return annotations
+    }
+
+    /// A hand-drawn underline under "Story time continues".
+    private static let squiggle: [CGPoint] = stride(from: 0.0, through: 200, by: 8).map { x in
+        CGPoint(x: 425 + x, y: 372 + 3 * sin(x / 12))
     }
 
     private var desktop: some View {

@@ -67,4 +67,12 @@ struct AnnotationRendererTests {
         let dark = (10..<60).contains { x in (5..<35).contains { y in pixels.rgb(x, y).0 < 100 } }
         #expect(dark)
     }
+
+    @Test func penDrawsItsStroke() throws {
+        let image = Pixels.white(width: 100, height: 100)
+        let pen = Annotation(kind: .pen([CGPoint(x: 10, y: 10), CGPoint(x: 90, y: 90)]), color: .black, lineWidth: 6)
+        let pixels = Pixels(try #require(AnnotationRenderer.render([pen], onto: image)))
+        #expect(pixels.rgb(50, 50).0 < 60)
+        #expect(pixels.rgb(80, 20) == (255, 255, 255))
+    }
 }

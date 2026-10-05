@@ -9,7 +9,12 @@ final class SelectionOverlayController {
     private enum Drag {
         case selection(start: CGPoint)
         case annotation(start: CGPoint)
+        case mark(start: CGPoint)
     }
+
+    /// Takes an in-memory picture of a display (size in points) for the blur and pixelate
+    /// previews. Kropic's own windows are left out.
+    typealias SnapshotProvider = @MainActor (CGDirectDisplayID, CGSize) async -> CGImage?
 
     private var panels: [SelectionOverlayPanel] = []
     private var model = SelectionModel()
@@ -17,14 +22,29 @@ final class SelectionOverlayController {
     private var continuation: CheckedContinuation<OverlayResult?, Never>?
     private var keyMonitor: Any?
     private var drag: Drag?
+    private var snapshotTask: Task<Void, Never>?
 
     var isPresented: Bool { continuation != nil }
 
     /// Returns the area, its marks and the chosen action, or `nil` when the user cancels.
-    func select() async -> OverlayResult? {
+    func select(snapshot: @escaping SnapshotProvider) async -> OverlayResult? {
         await withCheckedContinuation { continuation in
             self.continuation = continuation
             present()
+            takeSnapshots(with: snapshot)
+        }
+    }
+
+    private func takeSnapshots(with provider: @escaping SnapshotProvider) {
+        let displays = NSScreen.screens.compactMap { screen in screen.displayID.map { ($0, screen.frame.size) } }
+        let annotations = annotations
+        snapshotTask = Task {
+            for (displayID, size) in displays {
+                guard !Task.isCancelled else { return }
+                if let image = await provider(displayID, size) {
+                    annotations.setSnapshot(.init(image: image, scale: CGFloat(image.width) / size.width), for: displayID)
+                }
+            }
         }
     }
 
@@ -83,8 +103,11 @@ final class SelectionOverlayController {
                 return false
             }
             annotations.commitText()
-            if annotations.tool != nil, model.hitTarget(at: location, on: displayID) == .inside {
+            let target = model.hitTarget(at: location, on: displayID)
+            if annotations.tool != nil, target == .inside {
                 drag = .annotation(start: location)
+            } else if annotations.tool == nil, target == .inside, annotations.beginMove(at: location) {
+                drag = .mark(start: location)
             } else {
                 drag = .selection(start: location)
                 let startsNewSelection = model.hitTarget(at: location, on: displayID) == .outside
@@ -103,6 +126,8 @@ final class SelectionOverlayController {
                 if let area = model.rect(on: displayID) {
                     annotations.dragChanged(from: start, to: location, in: area)
                 }
+            case .mark(let start):
+                annotations.move(by: CGSize(width: location.x - start.x, height: location.y - start.y))
             case nil:
                 return false
             }
@@ -115,6 +140,8 @@ final class SelectionOverlayController {
                 if let area = model.rect(on: displayID) {
                     annotations.dragEnded(from: start, to: location, in: area)
                 }
+            case .mark:
+                annotations.endMove()
             case nil:
                 return false
             }
@@ -146,6 +173,10 @@ final class SelectionOverlayController {
             return true
         case KeyCode.returnKey, KeyCode.keypadEnter:
             perform(.translate)
+            return true
+        case KeyCode.delete, KeyCode.forwardDelete:
+            guard annotations.selectedID != nil else { return false }
+            annotations.deleteSelection()
             return true
         default:
             break
@@ -212,6 +243,8 @@ final class SelectionOverlayController {
         }
         keyMonitor = nil
         drag = nil
+        snapshotTask?.cancel()
+        snapshotTask = nil
         for panel in panels {
             panel.orderOut(nil)
         }

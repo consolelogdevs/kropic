@@ -271,3 +271,13 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** Annotation moves into the selection overlay with a capture toolbar (Move, tools, colors, undo/redo, Copy, Save, Share, Translate, cancel). Move is the default; with a tool selected, drags inside the selection draw and the selection handles hide. Save and Share run after the overlay closes because the overlay sits above dialogs and menus. Supersedes D-048; the Phase 7 editor window is removed, `Annotation`, `AnnotationDocument` and `AnnotationRenderer` are reused
 - **Why** Manual testing showed the editor-after-capture flow was not what users expect: annotating, saving and sharing belong to the moment of capture, like macOS's own screenshot tool. Separating Move and drawing modes keeps the one-gesture-one-meaning rule from D-048's reasoning
 - **Alternatives** Keeping the editor window, or a toolbar that always draws with modifier keys for moving
+
+### D-055 Moving marks in Move mode
+- **Decision** In Move mode a press on a mark selects and drags it; a press elsewhere moves or resizes the selection. The selected mark has a dashed outline, Delete removes it and choosing a color recolors it. A move is one undo step. Drawing tools always draw, even over existing marks
+- **Why** Manual testing asked for repositioning marks. Keeping it in Move mode keeps one meaning per gesture: drawing over a mark (for example a pencil circle around an arrow) never moves it by accident
+- **Alternatives** Moving a mark whenever a press lands on it with any tool, which makes drawing over marks unreliable
+
+### D-056 Live blur and pixelate from an in-memory snapshot
+- **Decision** When the overlay opens, each display is captured once into memory (Kropic's windows excluded). Blur and pixelate previews crop that snapshot and run the same `AnnotationRenderer` as the final image, so the preview matches the result. The snapshot is never written anywhere and is dropped with the overlay. The final image is still captured fresh when an action is chosen
+- **Why** Manual testing found the frosted-glass preview misleading; users should see exactly what will be hidden. Rendering from a snapshot is the only way to show real pixels under a transparent overlay
+- **Alternatives** Frosted glass only (D-054's first version), or freezing the screen and using the snapshot as the final image

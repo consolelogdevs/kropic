@@ -45,6 +45,9 @@
     "Arrow" : {
 
     },
+    "Arrow: drag from start to tip" : {
+
+    },
     "Black" : {
 
     },
@@ -52,6 +55,9 @@
 
     },
     "Blur" : {
+
+    },
+    "Blur: drag over text to hide it" : {
 
     },
     "Cancel (Esc)" : {
@@ -120,6 +126,9 @@
     "Default target language" : {
 
     },
+    "Delete removes it" : {
+
+    },
     "Detect Automatically" : {
 
     },
@@ -133,6 +142,9 @@
 
     },
     "Download…" : {
+
+    },
+    "Drag a mark to move it" : {
 
     },
     "Drag to select" : {
@@ -171,7 +183,10 @@
     "General" : {
 
     },
-    "Highlight" : {
+    "Highlighter" : {
+
+    },
+    "Highlighter: drag over text to mark it" : {
 
     },
     "History Cleared" : {
@@ -234,10 +249,19 @@
     "Open System Settings with the button below" : {
 
     },
+    "Pencil" : {
+
+    },
+    "Pencil: draw freely" : {
+
+    },
     "Pick a tool to annotate" : {
 
     },
     "Pixelate" : {
+
+    },
+    "Pixelate: drag over text to hide it" : {
 
     },
     "Quit Kropic" : {
@@ -247,6 +271,9 @@
 
     },
     "Rectangle" : {
+
+    },
+    "Rectangle: drag to frame something" : {
 
     },
     "Red" : {
@@ -301,6 +328,9 @@
 
     },
     "Text" : {
+
+    },
+    "Text: click to type, Enter to finish" : {
 
     },
     "The display you selected on is no longer available. Please try again." : {
@@ -362,6 +392,9 @@
 
     },
     "Undo (⌘Z)" : {
+
+    },
+    "V to move marks" : {
 
     },
     "Welcome to Kropic" : {

@@ -14,6 +14,7 @@ struct SelectionOverlayView: View {
     let onAction: (CaptureToolbar.ToolbarAction) -> Void
 
     @State private var hoverTarget: SelectionModel.HitTarget = .outside
+    @State private var hoverLocation: CGPoint = .zero
     @FocusState private var isTextFocused: Bool
 
     var body: some View {
@@ -38,13 +39,14 @@ struct SelectionOverlayView: View {
                     .onContinuousHover { phase in
                         if case .active(let location) = phase {
                             hoverTarget = model.hitTarget(at: location, on: displayID)
+                            hoverLocation = location
                         }
                     }
                     .pointerStyle(pointerStyle)
                     .allowsHitTesting(annotations.textDraft == nil)
 
                 if showsHint {
-                    SelectionHintPill()
+                    SelectionHintPill(tool: annotations.tool, hasSelection: selection != nil && !annotations.annotations.isEmpty)
                         .allowsHitTesting(false)
                         .frame(maxWidth: .infinity)
                         .padding(.top, hintTopInset + 12)
@@ -66,10 +68,17 @@ struct SelectionOverlayView: View {
     private var marks: some View {
         ZStack(alignment: .topLeading) {
             ForEach(annotations.annotations) { annotation in
-                AnnotationShapeView(annotation: annotation)
+                AnnotationShapeView(annotation: annotation, redaction: annotations.redactionPreview(for: annotation, on: displayID))
             }
             if let draft = annotations.draft {
-                AnnotationShapeView(annotation: draft)
+                AnnotationShapeView(annotation: draft, redaction: annotations.redactionPreview(for: draft, on: displayID))
+            }
+            if let selected = annotations.selected {
+                let bounds = selected.bounds.insetBy(dx: -4, dy: -4)
+                RoundedRectangle(cornerRadius: 3)
+                    .strokeBorder(Color.accent, style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
+                    .frame(width: bounds.width, height: bounds.height)
+                    .offset(x: bounds.minX, y: bounds.minY)
             }
         }
     }
@@ -92,9 +101,16 @@ struct SelectionOverlayView: View {
         }
     }
 
+    private var isOverMark: Bool {
+        annotations.annotations.topmost(at: hoverLocation, tolerance: OverlayAnnotations.hitTolerance) != nil
+    }
+
     private var pointerStyle: PointerStyle {
         if let tool = annotations.tool, hoverTarget == .inside {
             return tool == .text ? .horizontalText : .rectSelection
+        }
+        if annotations.tool == nil, hoverTarget == .inside, isOverMark {
+            return .grabIdle
         }
         switch hoverTarget {
         case .outside: return .rectSelection

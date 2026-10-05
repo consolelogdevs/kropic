@@ -62,3 +62,28 @@ struct AnnotationConversionTests {
         #expect(annotation.converted(origin: CGPoint(x: 5, y: 5), scale: 1).kind == .arrow(from: .zero, to: CGPoint(x: 10, y: 20)))
     }
 }
+
+struct AnnotationDocumentEditTests {
+    @Test func updateAndRemoveAreUndoable() {
+        var document = AnnotationDocument()
+        let box = Annotation(kind: .rectangle(CGRect(x: 0, y: 0, width: 10, height: 10)))
+        document.add(box)
+        document.update(box.moved(by: CGSize(width: 5, height: 0)))
+        #expect(document.annotations.first?.bounds.minX == 5)
+        document.undo()
+        #expect(document.annotations.first == box)
+        document.remove(id: box.id)
+        #expect(document.isEmpty)
+        document.undo()
+        #expect(document.annotations == [box])
+    }
+
+    @Test func updatingWithNoChangeAddsNoUndoStep() {
+        var document = AnnotationDocument()
+        let box = Annotation(kind: .rectangle(CGRect(x: 0, y: 0, width: 10, height: 10)))
+        document.add(box)
+        document.update(box)
+        document.undo()
+        #expect(document.isEmpty)
+    }
+}

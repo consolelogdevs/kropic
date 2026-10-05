@@ -104,7 +104,10 @@ final class AppState {
         archiveCurrentResult()
         resultPanel.close()
         focus.activateKropic()
-        guard let result = await overlay.select() else {
+        let capture = capture
+        guard let result = await overlay.select(snapshot: { displayID, size in
+            try? await capture.capture(CGRect(origin: .zero, size: size), on: displayID)
+        }) else {
             logger.info("Selection cancelled")
             focus.restore()
             return

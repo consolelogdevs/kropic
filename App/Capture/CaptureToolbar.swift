@@ -13,9 +13,13 @@ struct CaptureToolbar: View {
 
     var body: some View {
         HStack(spacing: 2) {
-            toolButton(nil, systemImage: "cursorarrow", title: String(localized: "Move"), key: "V")
+            toolButton(nil, title: String(localized: "Move"), key: "V") {
+                Image(systemName: "cursorarrow").font(.system(size: 14, weight: .medium))
+            }
             ForEach(AnnotationTool.allCases) { tool in
-                toolButton(tool, systemImage: tool.systemImage, title: tool.title, key: String(tool.shortcut).uppercased())
+                toolButton(tool, title: tool.title, key: String(tool.shortcut).uppercased()) {
+                    ToolIcon(tool: tool)
+                }
             }
 
             separator
@@ -38,8 +42,8 @@ struct CaptureToolbar: View {
                     .accessibilityLabel(color.title)
                 }
             }
-            .disabled(!(annotations.tool?.usesColor ?? true))
-            .opacity((annotations.tool?.usesColor ?? true) ? 1 : 0.35)
+            .disabled(!colorsApply)
+            .opacity(colorsApply ? 1 : 0.35)
 
             separator
 
@@ -78,13 +82,12 @@ struct CaptureToolbar: View {
         .fixedSize()
     }
 
-    private func toolButton(_ tool: AnnotationTool?, systemImage: String, title: String, key: String) -> some View {
+    private func toolButton(_ tool: AnnotationTool?, title: String, key: String, @ViewBuilder icon: () -> some View) -> some View {
         let isSelected = annotations.tool == tool
         return Button {
             annotations.tool = tool
         } label: {
-            Image(systemName: systemImage)
-                .font(.system(size: 14, weight: .medium))
+            icon()
                 .foregroundStyle(.white)
                 .frame(width: Metrics.Overlay.barButtonSize, height: Metrics.Overlay.barButtonSize)
                 .background(RoundedRectangle(cornerRadius: 7).fill(.white.opacity(isSelected ? 0.22 : 0)))
@@ -103,6 +106,12 @@ struct CaptureToolbar: View {
                 .contentShape(Rectangle())
         }
         .help(help)
+    }
+
+    /// Colors apply to the drawing tool, or in Move mode to the selected mark.
+    private var colorsApply: Bool {
+        if let tool = annotations.tool { return tool.usesColor }
+        return annotations.selected.map { !$0.isRedaction } ?? true
     }
 
     private var separator: some View {

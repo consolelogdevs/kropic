@@ -14,6 +14,7 @@ extension Annotation {
         copy.lineWidth = lineWidth * scale
         switch kind {
         case .arrow(let from, let to): copy.kind = .arrow(from: point(from), to: point(to))
+        case .pen(let points): copy.kind = .pen(points.map(point))
         case .rectangle(let r): copy.kind = .rectangle(rect(r))
         case .text(let string, let o, let size): copy.kind = .text(string, origin: point(o), fontSize: size * scale)
         case .highlight(let r): copy.kind = .highlight(rect(r))

@@ -46,6 +46,21 @@ public enum AnnotationRenderer {
         case .arrow(let start, let end):
             drawArrow(from: start, to: end, width: annotation.lineWidth, color: color, in: context)
 
+        case .pen(let points):
+            guard let first = points.first else { return }
+            context.setStrokeColor(color)
+            context.setLineWidth(annotation.lineWidth)
+            context.setLineCap(.round)
+            context.setLineJoin(.round)
+            context.move(to: first)
+            for point in points.dropFirst() {
+                context.addLine(to: point)
+            }
+            if points.count == 1 {
+                context.addLine(to: first)
+            }
+            context.strokePath()
+
         case .highlight(let rect):
             context.setBlendMode(.multiply)
             context.setFillColor(annotation.color.cgColor(alpha: 0.4))

@@ -15,6 +15,21 @@ public struct AnnotationDocument: Sendable, Equatable {
         annotations.append(annotation)
     }
 
+    /// Replaces the annotation with the same id, e.g. after it was moved or recolored.
+    public mutating func update(_ annotation: Annotation) {
+        guard let index = annotations.firstIndex(where: { $0.id == annotation.id }),
+              annotations[index] != annotation
+        else { return }
+        record()
+        annotations[index] = annotation
+    }
+
+    public mutating func remove(id: Annotation.ID) {
+        guard let index = annotations.firstIndex(where: { $0.id == id }) else { return }
+        record()
+        annotations.remove(at: index)
+    }
+
     public mutating func removeAll() {
         guard !annotations.isEmpty else { return }
         record()

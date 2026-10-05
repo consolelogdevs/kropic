@@ -77,3 +77,4 @@ Settled: annotation happens after capture in an editor window (D-048); sharing a
 - [x] Translate reads the annotated image; the result panel shows it
 - [x] Keyboard: V and A R T H B P tools, ⌘Z, ⇧⌘Z, ⌘C, ⌘S, Enter, Esc
 - [x] Phase 7 editor window and header button removed
+- [x] Move, delete and recolor marks after drawing; freehand pencil; live blur and pixelate from an in-memory screen snapshot; clearer tool icons and per-tool hints

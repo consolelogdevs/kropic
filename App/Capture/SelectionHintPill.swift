@@ -1,12 +1,27 @@
 import SwiftUI
 
-/// Gesture hints at the top of the screen, shown on every capture.
+/// Hints at the top of the screen. With a tool selected it explains that tool.
 struct SelectionHintPill: View {
+    var tool: AnnotationTool?
+    var hasSelection = false
+
     var body: some View {
         HStack(spacing: 10) {
-            Text("Drag to select")
-            separator
-            Text("Pick a tool to annotate")
+            if let tool {
+                Text(verbatim: tool.hint)
+                separator
+                Text("V to move marks")
+            } else if hasSelection {
+                Text("Drag a mark to move it")
+                separator
+                Text("Delete removes it")
+                separator
+                Text("Pick a tool to annotate")
+            } else {
+                Text("Drag to select")
+                separator
+                Text("Pick a tool to annotate")
+            }
             separator
             Text("Enter to translate")
             separator
