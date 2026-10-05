@@ -26,7 +26,7 @@ struct ResultHeader: View {
             Spacer()
             HStack(spacing: 2) {
                 if showsAnnotate {
-                    Button("Annotate", systemImage: "pencil.tip.crop.circle", action: onAnnotate)
+                    Button("Annotate", systemImage: "pencil", action: onAnnotate)
                         .buttonStyle(IconButtonStyle())
                         .help("Annotate and Share")
                 }

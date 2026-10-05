@@ -56,7 +56,7 @@ The UI is in English. Every user facing string lives in a String Catalog (`Local
 
 ## Annotate and share (Phase 7)
 
-The result panel header has an Annotate button. It opens an editor window with the captured image and these tools: arrow, rectangle, text, highlight, blur and pixelate, five colors (red, yellow, blue, black, white), and undo and redo (⌘Z, ⇧⌘Z). Blur and pixelate make the text under them unreadable, for hiding sensitive content before sharing. "Copy Image" puts the annotated image on the clipboard; "Share…" opens the macOS share menu. The extracted text and translation always come from the original image. Annotations live in memory only and are gone when the editor closes.
+The result panel header has an Annotate button (pencil icon). It opens an editor window with the captured image and these tools: arrow, rectangle, text, highlight, blur and pixelate, five colors (red, yellow, blue, black, white), and undo and redo (⌘Z, ⇧⌘Z). Blur and pixelate make the text under them unreadable, for hiding sensitive content before sharing. "Copy Image" puts the annotated image on the clipboard; "Share…" opens the macOS share menu. The extracted text and translation always come from the original image. Annotations live in memory only and are gone when the editor closes.
 
 ## Not in v1
 
