@@ -18,7 +18,7 @@ Kropic/
 │   ├── Permissions/             Screen Recording check, onboarding view
 │   ├── Windows/                 HostingWindowController (onboarding, settings, history)
 │   ├── History/                 history window and view model
-│   ├── Resources/               Assets.xcassets (AppIcon and MenuBarIcon from design/icon/, AccentColor, color tokens), Localizable.xcstrings
+│   ├── Resources/               Kropic.icon (Icon Composer app icon), Assets.xcassets (MenuBarIcon, AccentColor, color tokens), Localizable.xcstrings
 │   ├── Design/                  Theme (semantic tokens), Typography, Metrics; Components/ (shared views and button styles); Previews/ (debug render harness)
 │   ├── Annotation/              AnnotationTool, colors, AnnotationShapeView (on-screen preview of marks)
 │   ├── Export/                  ImageExporter (copy, save), SharePresenter

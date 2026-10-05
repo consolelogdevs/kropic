@@ -281,3 +281,8 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** When the overlay opens, each display is captured once into memory (Kropic's windows excluded). Blur and pixelate previews crop that snapshot and run the same `AnnotationRenderer` as the final image, so the preview matches the result. The snapshot is never written anywhere and is dropped with the overlay. The final image is still captured fresh when an action is chosen
 - **Why** Manual testing found the frosted-glass preview misleading; users should see exactly what will be hidden. Rendering from a snapshot is the only way to show real pixels under a transparent overlay
 - **Alternatives** Frosted glass only (D-054's first version), or freezing the screen and using the snapshot as the final image
+
+### D-057 App icon from Icon Composer
+- **Decision** The app icon is `App/Resources/Kropic.icon`, made in Icon Composer from `design/icon/source/layers/` (background and foreground SVGs). `ASSETCATALOG_COMPILER_APPICON_NAME` is `Kropic`. `actool` compiles it into layered icon images for macOS 26 and a flat `Kropic.icns` fallback for macOS 15, so the PNG `AppIcon.appiconset` is removed from the catalog (it stays in `design/icon/` as source). XcodeGen registers the package as one resource (`wrapper.icon`), which `actool` accepts
+- **Why** macOS 26 renders Icon Composer icons with Liquid Glass, light and dark variants and system tinting; a PNG set looks flat next to system apps. The generated fallback keeps macOS 15 covered without maintaining two icon sources
+- **Alternatives** Keeping only the PNG icon set, or both with the PNG set as an explicit fallback
