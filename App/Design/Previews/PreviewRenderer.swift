@@ -29,7 +29,6 @@ enum PreviewRenderer {
             Entry(name: "Settings", view: AnyView(SettingsPreview())),
             Entry(name: "History", view: AnyView(HistoryPreview.filled)),
             Entry(name: "HistoryEmpty", view: AnyView(HistoryPreview.empty)),
-            Entry(name: "Annotate", view: AnyView(AnnotationPreview())),
         ]
     }
 

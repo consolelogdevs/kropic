@@ -9,7 +9,7 @@ A small, fast menu bar utility. Press a shortcut, select any text on screen (in 
 1. **Trigger** — The user clicks the menu bar icon or presses the global shortcut (default ⌘⇧2, configurable in Settings)
 2. **Select** — Every display dims and the cursor becomes a crosshair. The user drags to draw a selection rectangle. A small label shows the selection size
 3. **Adjust** — After the mouse is released the selection stays editable. It can be moved by dragging inside and resized from its edges and corners
-4. **Confirm** — A small bar with a cancel (×) and a confirm (✓) button sits below the bottom right corner of the selection (or above it if there is no room). Clicking ✓ or pressing Enter confirms, × cancels. A hint pill at the top of the screen explains the gestures on every capture. Esc cancels and closes the overlay. Dragging outside the selection starts a new one, and a click without dragging clears it. The selection stays on the display where the drag started
+4. **Annotate and act** — After the mouse is released a capture toolbar sits below the bottom right corner of the selection (or above it if there is no room): Move, the annotation tools (arrow, rectangle, text, highlight, blur, pixelate), five colors, undo and redo, Copy Image, Save Image…, Share…, Translate and cancel (×). With Move selected, drags move and resize the selection; with a tool selected, drags inside the selection draw. Copy puts the annotated image on the clipboard, Save asks where to write a PNG, Share opens the macOS share menu, Translate (Enter) continues to the result panel. Keys: V Move, A R T H B P tools, ⌘Z / ⇧⌘Z, ⌘C, ⌘S, Enter, Esc. A hint pill at the top of the screen explains the gestures on every capture. Esc cancels and closes the overlay. Dragging outside the selection starts a new one, and a click without dragging clears it. The selection stays on the display where the drag started
 5. **Result panel** — A floating panel opens near the selected area. Its header shows the selection size and buttons to capture again and close; its footer shows keyboard hints and that translation runs on the device
    - Left side shows the captured image
    - Right side shows the extracted text, editable, with a copy button
@@ -54,9 +54,9 @@ The last 20 results, text only (extracted text as edited, translation, languages
 
 The UI is in English. Every user facing string lives in a String Catalog (`Localizable.xcstrings`) so Turkish and other languages can be added later. The design artboards are in Turkish; their copy is translated to English.
 
-## Annotate and share (Phase 7)
+## Annotate and share (Phase 8)
 
-The result panel header has an Annotate button (pencil icon). It opens an editor window with the captured image and these tools: arrow, rectangle, text, highlight, blur and pixelate, five colors (red, yellow, blue, black, white), and undo and redo (⌘Z, ⇧⌘Z). Blur and pixelate make the text under them unreadable, for hiding sensitive content before sharing. "Copy Image" puts the annotated image on the clipboard; "Share…" opens the macOS share menu. The extracted text and translation always come from the original image. Annotations live in memory only and are gone when the editor closes.
+Annotation happens on the capture screen, before translating (see step 4). Blur and pixelate make the text under them unreadable, and the text recognition reads the annotated image, so redacted text is never extracted. Save Image writes a PNG named like "Kropic 2026-10-05 at 22.41.07.png" to the folder the user picks; that is the only time Kropic writes an image to disk. The result panel shows the annotated image.
 
 ## Not in v1
 

@@ -256,3 +256,18 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Decision** `AnnotationRenderer` in KropicCore draws committed annotations into a copy of the image in image pixels (origin top-left). The editor shows that composite and only previews the shape being dragged with SwiftUI shapes. Copy and Share use the same composite
 - **Why** One drawing path means the shared image matches the screen exactly, and it is unit-testable by reading pixels. The original capture is never modified, so OCR and translation stay on the clean image
 - **Alternatives** Drawing annotations with SwiftUI on screen and separately for export
+
+### D-052 Save Image to a user-chosen location
+- **Decision** Save Image writes a PNG only to the location picked in the standard Save dialog. The app gets `com.apple.security.files.user-selected.read-write`, which only covers files the user picks. Amends D-005 and D-049: Kropic writes a captured image to disk only on an explicit Save
+- **Why** Saving annotated captures is a core use case of the capture toolbar. A user-picked location keeps the privacy promise meaningful: nothing is stored silently, and history stays text only
+- **Alternatives** Saving automatically to a fixed folder like macOS screenshots, or no Save at all
+
+### D-053 Text recognition reads the annotated image
+- **Decision** Marks are burned into the captured image before anything else; Translate runs OCR on that image and the result panel shows it
+- **Why** Blurred or pixelated text must not be extracted, or redaction would leak. The cost is that an arrow or highlight drawn over text can slightly disturb recognition
+- **Alternatives** OCR on the clean image, which ignores redactions
+
+### D-054 Capture toolbar replaces the annotation editor window
+- **Decision** Annotation moves into the selection overlay with a capture toolbar (Move, tools, colors, undo/redo, Copy, Save, Share, Translate, cancel). Move is the default; with a tool selected, drags inside the selection draw and the selection handles hide. Save and Share run after the overlay closes because the overlay sits above dialogs and menus. Supersedes D-048; the Phase 7 editor window is removed, `Annotation`, `AnnotationDocument` and `AnnotationRenderer` are reused
+- **Why** Manual testing showed the editor-after-capture flow was not what users expect: annotating, saving and sharing belong to the moment of capture, like macOS's own screenshot tool. Separating Move and drawing modes keeps the one-gesture-one-meaning rule from D-048's reasoning
+- **Alternatives** Keeping the editor window, or a toolbar that always draws with modifier keys for moving

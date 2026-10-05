@@ -1,22 +1,23 @@
 #if DEBUG
+import KropicCore
 import SwiftUI
 
-/// The selection overlay over a stand-in desktop, like the Overlay artboard (1440 × 900).
+/// The selection overlay over a stand-in desktop, with a few marks and the capture toolbar.
 /// The desktop colors are sample content, not design tokens.
 struct OverlayPreview: View {
     private static let screenSize = CGSize(width: 1440, height: 900)
-    private static let selection = CGRect(x: 410, y: 310, width: 616, height: 72)
+    private static let selection = CGRect(x: 410, y: 300, width: 616, height: 170)
 
     var body: some View {
         ZStack(alignment: .topLeading) {
             desktop
             SelectionOverlayView(
                 model: model,
+                annotations: annotations,
                 displayID: 1,
                 showsHint: true,
                 hintTopInset: 16,
-                onConfirm: {},
-                onCancel: {}
+                onAction: { _ in }
             )
             .environment(\.colorScheme, .light)
         }
@@ -27,6 +28,17 @@ struct OverlayPreview: View {
         let model = SelectionModel()
         model.setPreview(displayID: 1, rect: Self.selection)
         return model
+    }
+
+    private var annotations: OverlayAnnotations {
+        let annotations = OverlayAnnotations()
+        annotations.setPreview([
+            Annotation(kind: .rectangle(CGRect(x: 420, y: 330, width: 230, height: 34)), color: .red, lineWidth: 3),
+            Annotation(kind: .arrow(from: CGPoint(x: 760, y: 455), to: CGPoint(x: 660, y: 372)), color: .red, lineWidth: 3),
+            Annotation(kind: .highlight(CGRect(x: 650, y: 400, width: 330, height: 26)), color: .yellow, lineWidth: 3),
+            Annotation(kind: .text("Check this", origin: CGPoint(x: 780, y: 438), fontSize: 18), color: .blue, lineWidth: 3),
+        ], tool: .arrow)
+        return annotations
     }
 
     private var desktop: some View {

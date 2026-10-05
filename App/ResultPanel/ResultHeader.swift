@@ -5,8 +5,6 @@ import SwiftUI
 struct ResultHeader: View {
     let sizeText: String
     let showsCaptureAgain: Bool
-    let showsAnnotate: Bool
-    let onAnnotate: () -> Void
     let onCaptureAgain: () -> Void
     let onClose: () -> Void
 
@@ -25,11 +23,6 @@ struct ResultHeader: View {
                 .foregroundStyle(Color.textSecondary)
             Spacer()
             HStack(spacing: 2) {
-                if showsAnnotate {
-                    Button("Annotate", systemImage: "pencil", action: onAnnotate)
-                        .buttonStyle(IconButtonStyle())
-                        .help("Annotate and Share")
-                }
                 if showsCaptureAgain {
                     Button("Capture Again", systemImage: "crop", action: onCaptureAgain)
                         .buttonStyle(IconButtonStyle())

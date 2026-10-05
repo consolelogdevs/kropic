@@ -34,14 +34,16 @@ final class SelectionModel {
         return rect.width >= Self.minimumSize && rect.height >= Self.minimumSize
     }
 
-    /// Cancel and confirm, 32 pt each, with 4 pt padding and gap.
-    static let actionBarSize = CGSize(width: 76, height: 40)
-    static let actionBarGap: CGFloat = 10
+    static let toolbarGap: CGFloat = 10
 
-    /// Where the cancel and confirm bar sits on this display, or `nil` when it is hidden.
-    func actionBarFrame(on displayID: CGDirectDisplayID, bounds: CGRect) -> CGRect? {
+    /// The capture toolbar's size, measured by the view; an estimate until then.
+    var toolbarSize = CGSize(width: 720, height: 40)
+
+    /// Where the capture toolbar sits on this display, or `nil` when it is hidden: below the
+    /// selection's bottom-right corner, above it when there is no room, inside as a last resort.
+    func toolbarFrame(on displayID: CGDirectDisplayID, bounds: CGRect) -> CGRect? {
         guard let rect = rect(on: displayID), canConfirm, !isDragging else { return nil }
-        return Placement.confirmButtonFrame(size: Self.actionBarSize, selection: rect, bounds: bounds, gap: Self.actionBarGap)
+        return Placement.confirmButtonFrame(size: toolbarSize, selection: rect, bounds: bounds, gap: Self.toolbarGap)
     }
 
     func rect(on displayID: CGDirectDisplayID) -> CGRect? {

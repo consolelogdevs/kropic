@@ -26,6 +26,8 @@ targets:
       path: App/Kropic.entitlements
       properties:
         com.apple.security.app-sandbox: true
+        # Save Image writes only where the user picks in the Save dialog (D-052).
+        com.apple.security.files.user-selected.read-write: true
     dependencies:
       - package: KropicCore
       - package: KeyboardShortcuts

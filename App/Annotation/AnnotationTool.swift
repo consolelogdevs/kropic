@@ -26,6 +26,18 @@ enum AnnotationTool: String, CaseIterable, Identifiable {
         }
     }
 
+    /// Single-key shortcut in the capture toolbar.
+    var shortcut: Character {
+        switch self {
+        case .arrow: "a"
+        case .rectangle: "r"
+        case .text: "t"
+        case .highlight: "h"
+        case .blur: "b"
+        case .pixelate: "p"
+        }
+    }
+
     /// Blur and pixelate hide content and have no color.
     var usesColor: Bool {
         self != .blur && self != .pixelate

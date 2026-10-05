@@ -16,12 +16,12 @@ final class AppState {
     private var onboardingWindow: HostingWindowController<OnboardingView>?
     private var settingsWindow: HostingWindowController<SettingsView>?
     private var historyWindow: HostingWindowController<HistoryView>?
-    private var annotationWindow: HostingWindowController<AnnotationEditorView>?
     private var currentResult: ResultViewModel?
     private let overlay: SelectionOverlayController
     private let capture = CaptureService()
     private let resultPanel = ResultPanelController()
     private let focus = FocusRestorer()
+    private let sharePresenter = SharePresenter()
     private let recognizer = TextRecognizer()
     private var recognition: Task<Void, Never>?
     private let logger = Logger(subsystem: "app.kropic", category: "AppState")
@@ -42,18 +42,6 @@ final class AppState {
         Task { [history] in
             await history.reload()
         }
-    }
-
-    /// Opens the annotation editor for a capture, replacing an editor that is already open.
-    func annotate(_ result: ResultViewModel) {
-        guard let image = result.image else { return }
-        annotationWindow?.close()
-        let editor = AnnotationEditorViewModel(image: image, scale: result.scale)
-        // Floating, like the result panel, so it does not open behind it.
-        annotationWindow = HostingWindowController(title: String(localized: "Annotate"), level: .floating) {
-            AnnotationEditorView(model: editor)
-        }
-        annotationWindow?.show()
     }
 
     func showAbout() {
@@ -116,23 +104,54 @@ final class AppState {
         archiveCurrentResult()
         resultPanel.close()
         focus.activateKropic()
-        guard let selection = await overlay.select() else {
+        guard let result = await overlay.select() else {
             logger.info("Selection cancelled")
             focus.restore()
             return
         }
+        let selection = result.selection
 
-        let model: ResultViewModel
-        let image: CGImage
+        let captured: CGImage
         do {
-            image = try await capture.capture(selection.rect, on: selection.displayID)
-            model = ResultViewModel(image: image, scale: CGFloat(image.width) / selection.rect.width, selectionSize: selection.rect.size, settings: settings)
+            captured = try await capture.capture(selection.rect, on: selection.displayID)
         } catch {
             logger.error("Capture failed: \(String(describing: error))")
-            showResult(ResultViewModel(captureFailure: error.localizedDescription, selectionSize: selection.rect.size, settings: settings), near: selection)
+            if result.action == .translate {
+                showResult(ResultViewModel(captureFailure: error.localizedDescription, selectionSize: selection.rect.size, settings: settings), near: selection)
+            } else {
+                showError(error.localizedDescription)
+            }
             return
         }
 
+        // Burn the marks into the image. Everything below, OCR included, uses this version,
+        // so blurred or pixelated text is never read (D-053).
+        let scale = CGFloat(captured.width) / selection.rect.width
+        let marks = result.annotations.map { $0.converted(origin: selection.rect.origin, scale: scale) }
+        let image = marks.isEmpty ? captured : (AnnotationRenderer.render(marks, onto: captured) ?? captured)
+
+        switch result.action {
+        case .translate:
+            translate(image, scale: scale, selection: selection)
+        case .copyImage:
+            ImageExporter.copy(image, scale: scale)
+            focus.restore()
+        case .saveImage:
+            do {
+                _ = try await ImageExporter.save(image, scale: scale)
+            } catch {
+                showError(error.localizedDescription)
+            }
+            focus.restore()
+        case .shareImage(let anchor):
+            sharePresenter.share(ImageExporter.nsImage(image, scale: scale), at: anchor) { [weak self] in
+                self?.focus.restore()
+            }
+        }
+    }
+
+    private func translate(_ image: CGImage, scale: CGFloat, selection: SelectionResult) {
+        let model = ResultViewModel(image: image, scale: scale, selectionSize: selection.rect.size, settings: settings)
         showResult(model, near: selection)
         recognition = Task { [recognizer] in
             do throws(OCRError) {
@@ -145,13 +164,18 @@ final class AppState {
         }
     }
 
+    private func showError(_ message: String) {
+        let alert = NSAlert()
+        alert.messageText = message
+        NSApp.activate()
+        alert.runModal()
+        focus.restore()
+    }
+
     private func showResult(_ model: ResultViewModel, near selection: SelectionResult) {
         currentResult = model
         resultPanel.show(model, near: selection) { [weak self] in
             self?.startCapture()
-        } onAnnotate: { [weak self, weak model] in
-            guard let model else { return }
-            self?.annotate(model)
         } onClose: { [weak self] in
             self?.recognition?.cancel()
             self?.archiveCurrentResult()

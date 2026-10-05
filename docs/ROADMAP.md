@@ -68,4 +68,12 @@ Done when every screen matches its design in light and dark mode.
 - [x] Annotation editor window opened from the result panel header: tools, colors, undo and redo
 - [x] Copy the annotated image to the clipboard and share it through the macOS share menu
 
-Settled: annotation happens after capture in an editor window (D-048); sharing amends D-005 (D-049).
+Settled: annotation happens after capture in an editor window (D-048); sharing amends D-005 (D-049). Superseded by Phase 8 after testing: the editor window was removed, the core model and renderer stay.
+
+## Phase 8 — Capture toolbar: annotate, then copy, save, share or translate
+- [x] Capture toolbar under the selection: Move, annotation tools, colors, undo and redo, Copy, Save, Share, Translate, cancel
+- [x] Drawing on the selection in the overlay with live previews; marks converted to image pixels at capture (tested in KropicCore)
+- [x] Copy Image to the clipboard, Save Image as PNG to a user-chosen location, Share through the macOS share menu
+- [x] Translate reads the annotated image; the result panel shows it
+- [x] Keyboard: V and A R T H B P tools, ⌘Z, ⇧⌘Z, ⌘C, ⌘S, Enter, Esc
+- [x] Phase 7 editor window and header button removed

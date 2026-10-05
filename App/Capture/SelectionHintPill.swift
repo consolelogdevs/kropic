@@ -6,9 +6,9 @@ struct SelectionHintPill: View {
         HStack(spacing: 10) {
             Text("Drag to select")
             separator
-            Text("Drag edges to resize")
+            Text("Pick a tool to annotate")
             separator
-            Text("Enter to confirm")
+            Text("Enter to translate")
             separator
             Text("Esc to cancel")
         }
