@@ -287,3 +287,8 @@ Newest at the bottom. Format for each entry is the title line followed by Decisi
 - **Why** macOS 26 renders Icon Composer icons with Liquid Glass, light and dark variants and system tinting; a PNG set looks flat next to system apps. The generated fallback keeps macOS 15 covered without maintaining two icon sources
 - **Alternatives** Keeping only the PNG icon set, or both with the PNG set as an explicit fallback
 - **Note** After the switch Finder and the About panel showed an empty icon: a running app and Finder keep the icon they loaded first. Quitting the app, `lsregister -f` on the bundle and `killall Finder` fixed it; the build itself was correct
+
+### D-058 Open source first, notarized builds later
+- **Decision** Kropic is published as source under MIT at `ecsabanci/kropic`. Users clone and build it themselves (README, `Scripts/install.sh`). A clean clone builds without personal settings through Xcode's ad-hoc "Sign to Run Locally"; signing with any Apple ID (`Configs/Local.xcconfig`) keeps the screen recording permission across rebuilds. The private `design/` folder was removed from the entire git history before the first push and is git-ignored. Author email stays in commits by choice
+- **Why** Building from source needs no notarization, so interest can be tested without the paid Apple Developer Program. The design artboards are the owner's private work; only the product is shared
+- **Alternatives** Notarized `.dmg` releases right away (paid program), or shipping unsigned binaries, which macOS blocks

@@ -24,6 +24,7 @@ Detailed context lives in the files below. They are loaded automatically. Treat 
 | Generate project | `xcodegen generate` |
 | Build app | `xcodebuild -project Kropic.xcodeproj -scheme Kropic -configuration Debug build` |
 | Test core package | `swift test --package-path Packages/KropicCore` |
+| Install a Release build into /Applications | `Scripts/install.sh` |
 | Sync String Catalogs after changing UI text | `Scripts/sync-strings.sh` |
 | Check core builds for iOS | `cd Packages/KropicCore && xcodebuild -scheme KropicCore -destination 'generic/platform=iOS' build` |
 
@@ -52,7 +53,7 @@ I am an experienced web developer (React, TypeScript, Vue) and new to Swift. Whe
 
 ## Design
 
-- The visual spec lives in `design/` (artboards exported from the design canvas, light and dark). Treat it as a spec. Do not port any HTML or CSS
+- The visual spec lives in `design/` (artboards exported from the design canvas, light and dark). Treat it as a spec. Do not port any HTML or CSS. `design/` is private: it is git-ignored and not part of the public repository, so never commit it
 - Build with native SwiftUI controls and system materials. Match spacing, sizes, colors and states from the spec
 - Colors live in the asset catalog with Any and Dark appearance variants. Never hardcode hex values in views
 - The app supports System, Light and Dark appearance (see PRODUCT.md). Every screen must look right in both

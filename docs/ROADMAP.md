@@ -78,3 +78,13 @@ Settled: annotation happens after capture in an editor window (D-048); sharing a
 - [x] Keyboard: V and A R T H B P tools, ⌘Z, ⇧⌘Z, ⌘C, ⌘S, Enter, Esc
 - [x] Phase 7 editor window and header button removed
 - [x] Move, delete and recolor marks after drawing; freehand pencil; live blur and pixelate from an in-memory screen snapshot; clearer tool icons and per-tool hints
+
+## Phase 9 — Open-source release
+- [x] README with screenshots, build and install steps, permission and signing tips, privacy, shortcuts
+- [x] MIT license, CONTRIBUTING, issue templates
+- [x] `Scripts/install.sh`: Release build into /Applications
+- [x] `design/` kept private: removed from the whole git history before publishing, git-ignored
+- [x] Clean clone builds without personal signing (ad-hoc "Sign to Run Locally")
+- [ ] Published as `ecsabanci/kropic` on GitHub (public)
+
+Later, when there is interest: Developer ID signing, notarization and a `.dmg` (needs the paid Apple Developer Program).
