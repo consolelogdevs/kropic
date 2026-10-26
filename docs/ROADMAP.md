@@ -85,6 +85,6 @@ Settled: annotation happens after capture in an editor window (D-048); sharing a
 - [x] `Scripts/install.sh`: Release build into /Applications
 - [x] `design/` kept private: removed from the whole git history before publishing, git-ignored
 - [x] Clean clone builds without personal signing (ad-hoc "Sign to Run Locally")
-- [x] Published as `ecsabanci/kropic` on GitHub (public)
+- [x] Published as `consolelogdevs/kropic` on GitHub (public)
 
 Later, when there is interest: Developer ID signing, notarization and a `.dmg` (needs the paid Apple Developer Program).

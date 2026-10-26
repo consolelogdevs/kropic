@@ -33,7 +33,7 @@ Everything runs on your Mac. Text recognition (Vision) and translation (Apple Tr
 Kropic is not on the App Store yet. Build it yourself, it takes about a minute.
 
 ```bash
-git clone https://github.com/ecsabanci/kropic.git
+git clone https://github.com/consolelogdevs/kropic.git
 cd kropic
 brew install xcodegen
 ```
@@ -94,7 +94,7 @@ Kropic was built phase by phase with [Claude Code](https://claude.com/claude-cod
 
 ## Feedback
 
-Found a bug or have an idea? [Open an issue](https://github.com/ecsabanci/kropic/issues). Contributions are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
+Found a bug or have an idea? [Open an issue](https://github.com/consolelogdevs/kropic/issues). Contributions are welcome, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
