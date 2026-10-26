@@ -5,8 +5,11 @@ Configs/Local.xcconfig
 *.xcodeproj
 *.xcworkspace
 
-# Preview renders, regenerated with Kropic -renderPreviews
-design/renders/
+# Design spec, kept private (renders included)
+design/
+
+# Local backups
+.backup/
 
 # Build output
 build/
